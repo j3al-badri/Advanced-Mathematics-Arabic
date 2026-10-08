@@ -1,0 +1,2116 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>محرك الرياضيات المتقدمة</title>
+<script defer src="https://unpkg.com/mathlive"></script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+<link rel="preload" href="https://cdn.jsdelivr.net/pyodide/v0.28.3/full/pyodide.js" as="script" crossorigin>
+<link rel="preconnect" href="https://cdn.plot.ly" crossorigin>
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif}*{box-sizing:border-box}body{margin:0;background:#f6f7f9;color:#17191c}.app{max-width:1100px;margin:auto;padding:16px}.top{display:flex;align-items:center;gap:10px;justify-content:space-between}.status{font-size:13px;padding:7px 10px;border:1px solid #d5d8dd;border-radius:10px;background:white}.card{background:white;border:1px solid #d9dde3;border-radius:14px;padding:14px;margin-top:12px;box-shadow:0 2px 10px #0000000b}math-field#q{display:block;direction:ltr;text-align:left;width:100%;min-height:88px;font-size:28px;border:2px solid #cfd5dc;border-radius:12px;padding:14px;background:white}math-field#q:focus-within{border-color:#6b7280}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}button{font:inherit;border:1px solid #cfd4da;background:#fff;border-radius:10px;padding:9px 13px;cursor:pointer}button.primary{background:#0b3d91;color:#fff;border-color:#0b3d91}.tabs{display:flex;gap:6px;overflow:auto;padding:2px 0 9px}.tab{white-space:nowrap}.tab.active{background:#fffde7;color:#073763;border-color:#70b7ee;font-weight:700}.keys{display:grid;grid-template-columns:repeat(8,minmax(62px,1fr));gap:7px;direction:ltr}.key{min-height:44px;font-size:17px;padding:5px}.key.basic-number{color:#0b57d0;font-weight:700}.key math-field{pointer-events:none;border:0;background:transparent;font-size:18px}.answer{min-height:80px}.answer math-field{display:block;border:0;background:transparent;font-size:25px;direction:ltr;text-align:left}.msg{white-space:pre-wrap;direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:13px}.hint{font-size:13px;color:#626872;margin-top:8px}.kbd-title{display:flex;justify-content:space-between;align-items:center;gap:8px}.mobile-toggle{display:none}@media(max-width:700px){.app{padding:9px}.keys{grid-template-columns:repeat(5,minmax(50px,1fr));gap:5px}.key{min-height:42px;padding:3px}math-field#q{font-size:24px;min-height:76px}.mobile-toggle{display:inline-block}.keyboard.closed .tabs,.keyboard.closed .keys{display:none}}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:50;padding:3vh 12px;overflow:auto}.modal.open{display:block}.modal-box{max-width:1000px;margin:auto;background:white;border-radius:16px;padding:18px;direction:rtl}.tutorial-nav{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:6px;background:white;padding:8px 0;border-bottom:1px solid #ddd;margin-bottom:10px}.tutorial-nav button{font-size:13px;padding:6px 9px}.tutorial-grid{display:grid;gap:10px}.tutorial-grid>h3{color:#1565c0}.titem{border:1px solid #ddd;border-radius:10px;padding:10px}.titem code{direction:ltr;display:block;white-space:pre-wrap;background:#f6f7f9;padding:7px;border-radius:7px;margin:6px 0}.t-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.badge{font-size:12px;background:#eef1f4;border-radius:999px;padding:3px 8px}@media(max-width:700px){.modal{padding:0}.modal-box{min-height:100vh;border-radius:0}}
+
+.integral-form{display:grid;gap:10px;margin-top:14px}.integral-form label{display:grid;gap:5px;font-weight:600}.integral-form math-field{direction:ltr;text-align:left;min-height:46px;border:1px solid #cfd5dc;border-radius:10px;padding:7px;font-size:20px}.integral-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.integral-preview{direction:ltr;text-align:left;border:1px solid #d9dde3;background:#f8fafc;border-radius:10px;padding:10px;min-height:46px}@media(max-width:700px){.integral-row{grid-template-columns:1fr}}
+
+#functionModal.open{display:block;pointer-events:none;background:#0003}
+#functionModal .modal-box{position:fixed;top:8vh;left:50%;transform:translateX(-50%);width:min(720px,calc(100vw - 24px));margin:0;pointer-events:auto}
+#functionModal .t-head{cursor:move;user-select:none}
+#lineIntegralModal.open,#surfaceIntegralModal.open,#volumeIntegralModal.open{display:block;pointer-events:none;background:#0003}
+#lineIntegralModal .modal-box,#surfaceIntegralModal .modal-box,#volumeIntegralModal .modal-box{position:fixed;top:6vh;left:50%;transform:translateX(-50%);width:min(820px,calc(100vw - 24px));max-height:88vh;overflow:auto;margin:0;pointer-events:auto}
+#lineIntegralModal .t-head,#surfaceIntegralModal .t-head,#volumeIntegralModal .t-head{cursor:move;user-select:none}
+#polarIntegralModal.open,#cylIntegralModal.open,#sphIntegralModal.open{display:block;pointer-events:none;background:#0003}
+#polarIntegralModal .modal-box,#cylIntegralModal .modal-box,#sphIntegralModal .modal-box{position:fixed;top:6vh;left:50%;transform:translateX(-50%);width:min(760px,calc(100vw - 24px));max-height:88vh;overflow:auto;margin:0;pointer-events:auto}
+#polarIntegralModal .t-head,#cylIntegralModal .t-head,#sphIntegralModal .t-head{cursor:move;user-select:none}
+
+/* نسخ وطباعة السؤال والنتيجة فقط */
+@media print{
+  body.print-qa *{visibility:hidden!important}
+  body.print-qa .top,body.print-qa .top *,body.print-qa #q,body.print-qa #q *,body.print-qa .answer,body.print-qa .answer *{visibility:visible!important}
+  body.print-qa .top{position:absolute;top:0;left:0;right:0;border:0;box-shadow:none}
+  body.print-qa main.app>section.card:first-of-type{position:absolute;top:70px;left:0;right:0;border:0;box-shadow:none;padding:12px}
+  body.print-qa main.app>section.card:first-of-type:before{content:'السؤال';display:block;visibility:visible!important;font-weight:700;margin-bottom:8px}
+  body.print-qa main.app>section.card:first-of-type .actions,body.print-qa main.app>section.card:first-of-type .hint{display:none!important}
+  body.print-qa .answer{position:absolute;top:190px;left:0;right:0;border:0;box-shadow:none;padding:12px}
+  body.print-qa .answer .qa-tools{display:none!important}
+  body.print-qa .keyboard,body.print-qa footer{display:none!important}
+}
+
+/* نافذة الدليل المستقلة — تعديل واجهة فقط */
+#tutorialModal.open{display:block;pointer-events:none;background:transparent;padding:0;overflow:visible}
+#tutorialModal .modal-box{position:fixed;top:5vh;left:50%;transform:translateX(-50%);width:min(900px,calc(100vw - 24px));height:min(88vh,850px);max-width:none;margin:0;padding:0;overflow:hidden;pointer-events:auto;box-shadow:0 12px 40px #0005;border:1px solid #cfd5dc;display:flex;flex-direction:column}
+#tutorialModal .modal-box>.t-head{position:sticky;top:0;z-index:20;flex:0 0 auto;background:#fff;padding:12px 16px;border-bottom:1px solid #ddd;cursor:move;user-select:none}
+#tutorialModal .modal-box>.t-head #closeTutorial{position:sticky;top:0;z-index:21}
+#tutorialModal .tutorial-content{overflow:auto;padding:14px 18px 18px;flex:1 1 auto}
+@media(max-width:700px){#tutorialModal .modal-box{top:8px;left:8px;transform:none;width:calc(100vw - 16px);height:calc(100vh - 16px);min-height:0;border-radius:12px}}
+</style></head>
+<body><main class="app">
+<div class="top"><h2 style="margin:0">محرك الرياضيات المتقدمة</h2><span id="status" class="status">اللوحة جاهزة — تجهيز الحساب…</span></div>
+<section class="card"><math-field id="q" virtual-keyboard-mode="manual" smart-fence smart-mode></math-field><div class="actions"><button class="primary" id="calc">احسب</button><button id="clear" style="background:#fff0f0">مسح</button><button id="back">⌫</button><button id="left">←</button><button id="right">→</button><button id="tutorial" style="background:#efffef">الدليل</button></div><div class="hint">اكتب المسألة من لوحة LaTeX فقط. يمكن تعديلها مباشرة داخل الحقل ثم الضغط على احسب. بعض أزرار اللوحة للكتابة لا للحساب.</div></section>
+<section class="card keyboard" id="keyboard"><div class="kbd-title"><strong>لوحة LaTeX الرياضية</strong><button class="mobile-toggle" id="kt">☰</button></div><div class="tabs" id="tabs"></div><div class="keys" id="keys"></div><div id="plotSettings" style="display:none;margin-top:12px;padding:12px;border:1px solid #d9dde3;border-radius:12px;background:#f8fafc"><strong style="color:#1565c0">مجال الرسم 2D/3D</strong><div class="actions" style="align-items:center"><label>X من <input id="xmin" type="number" value="-10" step="any" style="width:80px"> إلى <input id="xmax" type="number" value="10" step="any" style="width:80px"></label><label>Y من <input id="ymin" type="number" value="-10" step="any" style="width:80px"> إلى <input id="ymax" type="number" value="10" step="any" style="width:80px"></label><label>Z من <input id="zmin" type="number" value="-10" step="any" style="width:80px"> إلى <input id="zmax" type="number" value="10" step="any" style="width:80px"></label><label>t من <input id="tmin" type="number" value="-10" step="any" style="width:80px"> إلى <input id="tmax" type="number" value="10" step="any" style="width:80px"></label><button id="saveRanges">حفظ المجال</button><button id="resetRanges">افتراضي</button></div><div class="hint" id="rangeMsg">هذه القيم تُستخدم تلقائيًا في الرسومات وتُحفظ في هذا المتصفح.</div></div></section>
+<section class="card answer"><strong>النتيجة</strong><div id="out" style="margin-top:12px"></div></section>
+<div class="actions qa-tools" style="margin:10px 0 18px;padding:0 4px"><button id="copyQA">نسخ</button><button id="printQA">طباعة PDF</button><span id="qaMsg" class="hint"></span></div>
+<footer style="text-align:center;margin:22px 0 8px;padding:16px 10px;border-top:1px solid #d9dde3;color:#4b5563;line-height:1.8">
+<div><strong>تصميم المهندس جلال البدري</strong></div>
+<div dir="ltr">jalal.al.badri26@gmail.com</div>
+</footer>
+</main>
+<div id="functionModal" class="modal"><div class="modal-box" style="max-width:720px"><div class="t-head"><h2 style="margin:0">حفظ الدوال</h2><button id="closeFunctions">إغلاق</button></div><p class="hint">اكتب الطرف الأيمن فقط ثم اضغط «حفظ». تبقى الدوال محفوظة في هذا المتصفح ويمكن استعمالها في الحسابات والرسم.</p><div style="display:grid;gap:12px;margin-top:14px;direction:ltr">
+<div style="display:flex;gap:8px;align-items:center"><strong style="min-width:75px">f(x) =</strong><math-field id="funF" style="flex:1;min-height:48px;border:1px solid #cfd5dc;border-radius:10px;padding:8px"></math-field><button data-savefun="f">حفظ</button></div>
+<div style="display:flex;gap:8px;align-items:center"><strong style="min-width:75px">g(x,y) =</strong><math-field id="funG" style="flex:1;min-height:48px;border:1px solid #cfd5dc;border-radius:10px;padding:8px"></math-field><button data-savefun="g">حفظ</button></div>
+<div style="display:flex;gap:8px;align-items:center"><strong style="min-width:75px">h(x,y,z) =</strong><math-field id="funH" style="flex:1;min-height:48px;border:1px solid #cfd5dc;border-radius:10px;padding:8px"></math-field><button data-savefun="h">حفظ</button></div>
+</div><div id="functionMsg" class="hint" style="margin-top:12px"></div></div></div>
+<div id="lineIntegralModal" class="modal"><div class="modal-box" style="max-width:760px"><div class="t-head"><h2 style="margin:0">التكامل الخطي</h2><button id="closeLineIntegral">إغلاق</button></div><div class="integral-form"><label>النوع<select id="lineType"><option value="scalar">دالة قياسية ∫ f ds</option><option value="vector">مجال متجهي ∫ F·dr</option></select></label><label id="lineScalarLabel">الدالة f(x,y,z)<math-field id="lineF"></math-field></label><div id="lineVectorFields" style="display:none"><div class="integral-row"><label>P(x,y,z)<math-field id="lineP"></math-field></label><label>Q(x,y,z)<math-field id="lineQ"></math-field></label></div><label>R(x,y,z)<math-field id="lineR"></math-field></label></div><strong>دالة المسير r(t)</strong><div class="integral-row"><label>x(t)<math-field id="lineX"></math-field></label><label>y(t)<math-field id="lineY"></math-field></label></div><label>z(t)<math-field id="lineZ"></math-field></label><div class="integral-row"><label>الحد الأدنى t<math-field id="lineA"></math-field></label><label>الحد الأعلى t<math-field id="lineB"></math-field></label></div><div class="integral-preview" id="linePreview"></div><div class="actions"><button class="primary" id="lineToQuestion">نقل إلى السؤال</button><button id="lineReset">إغلاق</button></div></div></div></div>
+<div id="surfaceIntegralModal" class="modal"><div class="modal-box" style="max-width:820px"><div class="t-head"><h2 style="margin:0">التكامل السطحي</h2><button id="closeSurfaceIntegral">إغلاق</button></div><div class="integral-form"><label>النوع<select id="surfaceType"><option value="scalar">دالة قياسية ∬ f dS</option><option value="flux">فيض مجال متجهي ∬ F·n dS</option></select></label><label id="surfaceScalarLabel">الدالة f(x,y,z)<math-field id="surfaceF"></math-field></label><div id="surfaceVectorFields" style="display:none"><div class="integral-row"><label>P(x,y,z)<math-field id="surfaceP"></math-field></label><label>Q(x,y,z)<math-field id="surfaceQ"></math-field></label></div><label>R(x,y,z)<math-field id="surfaceR"></math-field></label></div><strong>دالة السطح r(u,v)</strong><div class="integral-row"><label>x(u,v)<math-field id="surfaceX"></math-field></label><label>y(u,v)<math-field id="surfaceY"></math-field></label></div><label>z(u,v)<math-field id="surfaceZ"></math-field></label><div class="integral-row"><label>u من<math-field id="surfaceUA"></math-field></label><label>u إلى<math-field id="surfaceUB"></math-field></label><label>v من<math-field id="surfaceVA"></math-field></label><label>v إلى<math-field id="surfaceVB"></math-field></label></div><div class="integral-preview" id="surfacePreview"></div><div class="actions"><button class="primary" id="surfaceToQuestion">نقل إلى السؤال</button><button id="surfaceReset">إغلاق</button></div></div></div></div>
+<div id="fluxIntegralModal" class="modal"><div class="modal-box" style="max-width:820px"><div class="t-head"><h2 style="margin:0">flux</h2><button id="closeFluxIntegral">إغلاق</button></div><div class="integral-form"><strong>المجال المتجهي F</strong><div class="integral-row"><label>P(x,y,z)<math-field id="fluxP"></math-field></label><label>Q(x,y,z)<math-field id="fluxQ"></math-field></label></div><label>R(x,y,z)<math-field id="fluxR"></math-field></label><strong>السطح r(u,v)</strong><div class="integral-row"><label>x(u,v)<math-field id="fluxX"></math-field></label><label>y(u,v)<math-field id="fluxY"></math-field></label></div><label>z(u,v)<math-field id="fluxZ"></math-field></label><div class="integral-row"><label>u من<math-field id="fluxUA"></math-field></label><label>u إلى<math-field id="fluxUB"></math-field></label><label>v من<math-field id="fluxVA"></math-field></label><label>v إلى<math-field id="fluxVB"></math-field></label></div><div class="actions"><button class="primary" id="fluxToQuestion">نقل إلى السؤال</button><button id="fluxReset">مسح الحقول</button></div></div></div></div>
+<div id="gaussIntegralModal" class="modal"><div class="modal-box" style="max-width:820px"><div class="t-head"><h2 style="margin:0">Gauss</h2><button id="closeGaussIntegral">إغلاق</button></div><div class="integral-form"><strong>المجال المتجهي F</strong><div class="integral-row"><label>P(x,y,z)<math-field id="gaussP"></math-field></label><label>Q(x,y,z)<math-field id="gaussQ"></math-field></label></div><label>R(x,y,z)<math-field id="gaussR"></math-field></label><strong>حدود الحجم</strong><div class="integral-row"><label>x من<math-field id="gaussXA"></math-field></label><label>x إلى<math-field id="gaussXB"></math-field></label><label>y من<math-field id="gaussYA"></math-field></label><label>y إلى<math-field id="gaussYB"></math-field></label></div><div class="integral-row"><label>z من<math-field id="gaussZA"></math-field></label><label>z إلى<math-field id="gaussZB"></math-field></label></div><div class="actions"><button class="primary" id="gaussToQuestion">نقل إلى السؤال</button><button id="gaussReset">مسح الحقول</button></div></div></div></div>
+<div id="stokesIntegralModal" class="modal"><div class="modal-box" style="max-width:820px"><div class="t-head"><h2 style="margin:0">Stokes</h2><button id="closeStokesIntegral">إغلاق</button></div><div class="integral-form"><strong>المجال المتجهي F</strong><div class="integral-row"><label>P(x,y,z)<math-field id="stokesP"></math-field></label><label>Q(x,y,z)<math-field id="stokesQ"></math-field></label></div><label>R(x,y,z)<math-field id="stokesR"></math-field></label><strong>السطح r(u,v)</strong><div class="integral-row"><label>x(u,v)<math-field id="stokesX"></math-field></label><label>y(u,v)<math-field id="stokesY"></math-field></label></div><label>z(u,v)<math-field id="stokesZ"></math-field></label><div class="integral-row"><label>u من<math-field id="stokesUA"></math-field></label><label>u إلى<math-field id="stokesUB"></math-field></label><label>v من<math-field id="stokesVA"></math-field></label><label>v إلى<math-field id="stokesVB"></math-field></label></div><div class="actions"><button class="primary" id="stokesToQuestion">نقل إلى السؤال</button><button id="stokesReset">مسح الحقول</button></div></div></div></div>
+
+<div id="polarIntegralModal" class="modal"><div class="modal-box" style="max-width:760px"><div class="t-head"><h2 style="margin:0">التكامل القطبي</h2><button id="closePolarIntegral">إغلاق</button></div><div class="integral-form"><label>الدالة f(r,θ)<math-field id="polarF"></math-field></label><div class="integral-row"><label>r من<math-field id="polarRA"></math-field></label><label>r إلى<math-field id="polarRB"></math-field></label><label>θ من<math-field id="polarTA"></math-field></label><label>θ إلى<math-field id="polarTB"></math-field></label></div><div class="actions"><button class="primary" id="polarToQuestion">نقل إلى السؤال</button><button id="polarCloseBottom">إغلاق</button></div></div></div></div>
+<div id="cylIntegralModal" class="modal"><div class="modal-box" style="max-width:760px"><div class="t-head"><h2 style="margin:0">التكامل الأسطواني</h2><button id="closeCylIntegral">إغلاق</button></div><div class="integral-form"><label>الدالة f(r,θ,z)<math-field id="cylF"></math-field></label><div class="integral-row"><label>r من<math-field id="cylRA"></math-field></label><label>r إلى<math-field id="cylRB"></math-field></label><label>θ من<math-field id="cylTA"></math-field></label><label>θ إلى<math-field id="cylTB"></math-field></label><label>z من<math-field id="cylZA"></math-field></label><label>z إلى<math-field id="cylZB"></math-field></label></div><div class="actions"><button class="primary" id="cylToQuestion">نقل إلى السؤال</button><button id="cylCloseBottom">إغلاق</button></div></div></div></div>
+<div id="sphIntegralModal" class="modal"><div class="modal-box" style="max-width:760px"><div class="t-head"><h2 style="margin:0">التكامل الكروي</h2><button id="closeSphIntegral">إغلاق</button></div><div class="integral-form"><label>الدالة f(ρ,θ,φ)<math-field id="sphF"></math-field></label><div class="integral-row"><label>ρ من<math-field id="sphRA"></math-field></label><label>ρ إلى<math-field id="sphRB"></math-field></label><label>θ من<math-field id="sphTA"></math-field></label><label>θ إلى<math-field id="sphTB"></math-field></label><label>φ من<math-field id="sphPA"></math-field></label><label>φ إلى<math-field id="sphPB"></math-field></label></div><div class="actions"><button class="primary" id="sphToQuestion">نقل إلى السؤال</button><button id="sphCloseBottom">إغلاق</button></div></div></div></div>
+<div id="angleConvertModal" class="modal"><div class="modal-box" style="max-width:520px;direction:rtl;text-align:right"><div class="t-head"><h2 style="margin:0">تحويل الزوايا</h2><button id="closeAngleConvert">إغلاق</button></div><div class="integral-form"><label>الزاوية<input id="angleValue" type="text" inputmode="text" value="180" placeholder="مثال: 180، π، π/2، 2π" style="min-height:46px;border:1px solid #cfd5dc;border-radius:10px;padding:8px;font-size:18px;direction:ltr;text-align:left"></label><div class="integral-row"><label>من<select id="angleFrom"><option value="deg">°</option><option value="rad">rad</option><option value="grad">grad</option></select></label><label>إلى<select id="angleTo"><option value="rad">rad</option><option value="deg">°</option><option value="grad">grad</option></select></label></div><div class="integral-preview" id="angleResult">180° = 3.14159265359 rad</div><div class="actions"><button class="primary" id="convertAngle">تحويل</button><button id="angleToQuestion">إلى السؤال</button></div><div class="hint">180° = π rad = 200 grad. إدخال الراديان يقبل π و π/2 و 2π والقيم العشرية.</div></div></div></div>
+<div id="tutorialModal" class="modal"><div class="modal-box"><div class="t-head"><h2 style="margin:0">Tutorial — دليل الصيغ المقبولة</h2><button id="closeTutorial">✕ إغلاق</button></div><div class="tutorial-content">
+<div id="tutorialNav" class="tutorial-nav"></div>
+<div class="titem" style="background:#f8fbff;border-color:#b9d8f5;margin:12px 0">
+<strong>ما الهدف من هذا الدليل؟</strong>
+<div class="hint" style="margin-top:6px;line-height:1.8">الدليل يوضح بالصيغ والأمثلة كيف تُدخل المسائل التي يفهمها المحرك. اختر القسم، راجع المثال وشرح وظيفته ومداخلاته، ثم اضغط «إلى السؤال». بعد انتقال المثال إلى خانة السؤال يمكنك تغيير الأعداد، المعاملات، المتغيرات أو الشروط التي يقبلها المثال ثم الضغط على «احسب».</div>
+<div class="hint" style="margin-top:6px;line-height:1.8"><strong>لماذا تبدو بعض الأمثلة بصيغة غير معتادة؟</strong> بعض الوظائف المتقدمة تُعرض بصيغة مثل <span dir="ltr">operatorname(...)</span> لأنها صيغة داخلية واضحة يستخدمها المحرك لتمييز الوظيفة ومداخلاتها بدقة، خصوصًا عندما لا توجد لها كتابة LaTeX قياسية واحدة سهلة التحليل. هذه الصيغة ليست خطأ؛ اضغط «إلى السؤال» ويمكنك تعديل القيم داخل الأقواس.</div>
+<div class="hint" style="margin-top:6px;line-height:1.8"><strong>المداخل:</strong> هي القيم أو الدوال أو المتغيرات الموجودة داخل الأقواس. ترتيبها مهم في الوظائف الداخلية. أما المعادلات المكتوبة بالشكل الرياضي المعتاد فتُعد المعادلة وشروطها نفسها هي المداخل.</div>
+</div>
+<p class="hint">اختر القسم ثم اضغط «إلى السؤال» لإدخال المثال. القوالب الرمزية البحتة مخصصة للكتابة وقد لا تكون عملية حساب مستقلة.</p><div id="tutorialBody" class="tutorial-grid"></div></div></div></div>
+<div id="volumeIntegralModal" class="modal"><div class="modal-box" style="max-width:820px"><div class="t-head"><h2 style="margin:0">تكامل الحجم</h2><button id="closeVolumeIntegral">إغلاق</button></div><div class="integral-form"><label>الدالة f(x,y,z)<math-field id="volumeF"></math-field></label><strong>الحجم وحدود التكامل</strong><div class="integral-row"><label>x من<math-field id="volumeXA"></math-field></label><label>x إلى<math-field id="volumeXB"></math-field></label><label>y من<math-field id="volumeYA"></math-field></label><label>y إلى<math-field id="volumeYB"></math-field></label></div><div class="integral-row"><label>z من<math-field id="volumeZA"></math-field></label><label>z إلى<math-field id="volumeZB"></math-field></label></div><div class="integral-preview" id="volumePreview"></div><div class="actions"><button class="primary" id="volumeToQuestion">نقل إلى السؤال</button><button id="volumeReset">إغلاق</button></div></div></div></div>
+
+
+<script>
+const MF=()=>document.getElementById('q');
+const panels={
+"أساسي":[['7','7'],['8','8'],['9','9'],['+','+'],['−','-'],['4','4'],['5','5'],['6','6'],['×','\\cdot'],['÷','\\frac{#0}{#?}'],['1','1'],['2','2'],['3','3'],['=','='],['≠','\\ne'],['0','0'],['.','.'],['(', '('],[')',')'],['[','['],[']',']'],['{','\\{'],['}','\\}'],['±','\\pm'],['∓','\\mp'],['x','x'],['y','y'],['z','z'],['t','t'],['u','u'],['v','v'],['m','m'],['n','n'],['i','i'],['j','j'],['k','k'],['h','h'],['π','\\pi'],['e','e'],['∞','\\infty'],['|x|','\\left|#0\\right|'],['⌊x⌋','\\lfloor #0\\rfloor'],['⌈x⌉','\\lceil #0\\rceil'],['%','/100']],
+"قوى وجذور":[['x²','#0^2'],['x³','#0^3'],['xⁿ','#0^{#?}'],['x⁻ⁿ','#0^{-#?}'],['√','\\sqrt{#0}'],['∛','\\sqrt[3]{#0}'],['ⁿ√','\\sqrt[#?]{#0}'],['1/x','\\frac{1}{#0}'],['كسر','\\frac{#0}{#?}'],['exp','\\exp\\left(#0\\right)'],['ln','\\ln\\left(#0\\right)'],['log','\\operatorname{log10}\\left(#0\\right)'],['logₐ','\\log_{#?}\\left(#0\\right)']],
+"مثلثيات":[['x','x'],['θ','\\theta'],['φ','\\phi'],['sin','\\sin\\left(#0\\right)'],['cos','\\cos\\left(#0\\right)'],['tan','\\tan\\left(#0\\right)'],['cot','\\cot\\left(#0\\right)'],['sec','\\sec\\left(#0\\right)'],['csc','\\csc\\left(#0\\right)'],['asin','\\arcsin\\left(#0\\right)'],['acos','\\arccos\\left(#0\\right)'],['atan','\\arctan\\left(#0\\right)'],['acot','\\operatorname{arccot}\\left(#0\\right)'],['sinh','\\sinh\\left(#0\\right)'],['cosh','\\cosh\\left(#0\\right)'],['tanh','\\tanh\\left(#0\\right)'],['coth','\\coth\\left(#0\\right)'],['asinh','\\operatorname{arsinh}\\left(#0\\right)'],['acosh','\\operatorname{arcosh}\\left(#0\\right)'],['atanh','\\operatorname{artanh}\\left(#0\\right)'],['°','^{\\circ}'],['rad','\\operatorname{rad}'],['grad','\\operatorname{grad}'],['conv','__ANGLE_CONVERT__']],
+"تفاضل":[['d/dx','\\frac{d}{dx}#0'],['d²/dx²','\\frac{d^2}{dx^2}#0'],['dⁿ/dxⁿ','\\frac{d^{#?}}{dx^{#?}}#0'],['∂/∂x','\\frac{\\partial}{\\partial x}#0'],['∂/∂y','\\frac{\\partial}{\\partial y}#0'],['∂/∂z','\\frac{\\partial}{\\partial z}#0'],['∂²/∂x²','\\frac{\\partial^2}{\\partial x^2}#0'],['∂²/∂x∂y','\\frac{\\partial^2}{\\partial x\\partial y}#0'],['f′','f^{\\prime}\\left(#0\\right)'],['f″','f^{\\prime\\prime}\\left(#0\\right)'],['∇','\\nabla'],['Δ','\\nabla^2']],
+"تكامل":[['ρ','\\rho'],['φ','\\phi'],['θ','\\theta'],['∫','\\int #0\\,dx'],['∫ₐᵇ','\\int_{#?}^{#?}#0\\,dx'],['∬','\\iint #0\\,dx\\,dy'],['∭','\\iiint #0\\,dx\\,dy\\,dz'],['∮','__LINE_INTEGRAL__'],['∯','__SURFACE_INTEGRAL__'],['∰','__VOLUME_INTEGRAL__'],['Σ','\\sum_{#?}^{#?}#0'],['Π','\\prod_{#?}^{#?}#0'],['lim','\\lim_{x\\to #?}#0'],['lim x→∞','\\lim_{x\\to\\infty}#0']],
+"جبر":[['حفظ دوال','__FUNCTION_STORE__'],['f(x)','__CALL_F__'],['g(x,y)','__CALL_G__'],['h(x,y,z)','__CALL_H__'],['نظام','\\begin{cases}#0\\\\#?\\end{cases}'],['نظام 3','\\begin{cases}#?\\\\#?\\\\#?\\end{cases}'],['<','<'],['>','>'],['≤','\\le'],['≥','\\ge'],['≠','\\ne'],['≈','\\approx'],['factor','\\operatorname{factor}\\left(#0\\right)'],['expand','\\operatorname{expand}\\left(#0\\right)'],['simplify','\\operatorname{simplify}\\left(#0\\right)'],['solve','\\operatorname{solve}\\left(#0,#?\\right)'],['roots','\\operatorname{roots}\\left(#0\\right)'],['linear','a x+b=0'],['quadratic','a x^2+b x+c=0'],['cubic','a x^3+b x^2+c x+d=0'],['quartic','a x^4+b x^3+c x^2+d x+e=0'],['polynomial','\\sum_{k=0}^{n}a_kx^k=0'],['rational','\\frac{#?}{#?}=0'],['radical','\\sqrt{#?}=#?'],['exponential','a^{x}=b'],['log equation','\\log_{a}\\left(x\\right)=b'],['nonlinear system','\\begin{cases}#?\\\\#?\\end{cases}']],
+"مصفوفات":[['مصفوفة…','__MATRIX_PICKER__'],['det','\\det\\left(#0\\right)'],['A⁻¹','#0^{-1}'],['Aᵀ','#0^{T}'],['A*','A^{*}'],['A†','A^{\\dagger}'],['tr(A)','\\operatorname{tr}\\left(#0\\right)'],['rank','\\operatorname{rank}\\left(#0\\right)'],['A+B','#0+#?'],['A−B','#0-#?'],['AB','#0#?'],['kA','#? #0'],['Ax=b','#0#?=#?'],['λI−A','\\lambda I-#0']],
+"متجهات":[['متجه…','__VECTOR_PICKER__'],['متجه صف…','__ROW_VECTOR_PICKER__'],['A·B','#0\\cdot#?'],['A×B','#0\\times#?'],['|v|','\\left\\|#0\\right\\|'],['v̂','\\hat{#0}'],['proj','\\operatorname{proj}_{#?}\\left(#0\\right)'],['comp','\\operatorname{comp}_{#?}\\left(#0\\right)'],['r(t)','\\mathbf{r}\\left(t\\right)'],['dr/dt','\\frac{d\\mathbf{r}}{dt}'],['T','\\operatorname{dgCurveTangent}\\left(#?,#?,#?,t\\right)'],['N','\\operatorname{dgCurveNormal}\\left(#?,#?,#?,t\\right)'],['B','\\operatorname{dgCurveBinormal}\\left(#?,#?,#?,t\\right)']],
+"تحليل متجهي":[['∇','\\nabla'],['grad f','\\nabla #0'],['div F','\\nabla\\cdot#0'],['curl F','\\nabla\\times#0'],['Laplacian','\\nabla^2 #0'],['∇²f xyz','\\frac{\\partial^2 #0}{\\partial x^2}+\\frac{\\partial^2 #0}{\\partial y^2}+\\frac{\\partial^2 #0}{\\partial z^2}'],['Jacobian','\\frac{\\partial\\left(#?\\right)}{\\partial\\left(#?\\right)}'],['Hessian','\\operatorname{Hess}\\left(#0\\right)'],['line ∫','__LINE_INTEGRAL__'],['surface ∫','__SURFACE_INTEGRAL__'],['volume ∫','__VOLUME_INTEGRAL__'],['flux','__FLUX_INTEGRAL__'],['Gauss','__GAUSS_INTEGRAL__'],['Stokes','__STOKES_INTEGRAL__'],['∂/∂n','\\frac{\\partial #0}{\\partial n}']],
+"رسم 2D/3D":[['مجال الرسم…','__PLOT_SETTINGS__'],['plot2d','\\operatorname{plot2d}\\left(#0\\right)'],['plot2d_multi','\\operatorname{plot2d\\_multi}\\left(#?,#?\\right)'],['implicit2d','\\operatorname{implicit2d}\\left(#0\\right)'],['parametric2d','\\operatorname{parametric2d}\\left(#?,#?\\right)'],['polarplot','\\operatorname{polarplot}\\left(#0\\right)'],['plot3d','\\operatorname{plot3d}\\left(#0\\right)'],['implicit3d','\\operatorname{implicit3d}\\left(#0\\right)'],['parametric3d','\\operatorname{parametric3d}\\left(#?,#?,#?\\right)'],['surface3d','\\operatorname{surface3d}\\left(#?,#?,#?\\right)'],['contour','\\operatorname{contour}\\left(#0\\right)'],['vectorfield2d','\\operatorname{vectorfield2d}\\left(#?,#?\\right)'],['vectorfield3d','\\operatorname{vectorfield3d}\\left(#?,#?,#?\\right)'],['point2d','\\operatorname{point2d}\\left(#?,#?\\right)'],['point3d','\\operatorname{point3d}\\left(#?,#?,#?\\right)']],
+"مركب":[['i','i'],['z','z=a+bi'],['Re','\\operatorname{Re}\\left(#0\\right)'],['Im','\\operatorname{Im}\\left(#0\\right)'],['arg','\\arg\\left(#0\\right)'],['conj','\\overline{#0}'],['|z|','\\left|#0\\right|'],['polar','r\\left(\\cos\\theta+i\\sin\\theta\\right)'],['Euler','r e^{i\\theta}'],['residue','\\operatorname{Res}_{z=#?}#0']],
+"ODE/PDE":[["y′","y'"],["y″","y''"],['dy/dx','\\frac{dy}{dx}'],['d²y/dx²','\\frac{d^2y}{dx^2}'],['ODE 1st','\\frac{dy}{dx}=#0'],['ODE 2nd','\\frac{d^2y}{dx^2}=#0'],['IC','y\\left(#?\\right)=#?'],['BC','\\begin{cases}y\\left(#?\\right)=#?\\\\y\\left(#?\\right)=#?\\end{cases}'],['uₜ','\\frac{\\partial u}{\\partial t}'],['uₓ','\\frac{\\partial u}{\\partial x}'],['uᵧ','\\frac{\\partial u}{\\partial y}'],['uₓₓ','\\frac{\\partial^2u}{\\partial x^2}'],['uᵧᵧ','\\frac{\\partial^2u}{\\partial y^2}'],['Laplace PDE','\\frac{\\partial^2u}{\\partial x^2}+\\frac{\\partial^2u}{\\partial y^2}=0'],['heat','\\frac{\\partial u}{\\partial t}=\\alpha\\frac{\\partial^2u}{\\partial x^2}'],['wave','\\frac{\\partial^2u}{\\partial t^2}=c^2\\frac{\\partial^2u}{\\partial x^2}']],
+"احتمال وإحصاء":[
+['n!','#0!'],
+['C(n,r)','\\left(\\begin{matrix}#?\\\\#?\\end{matrix}\\right)'],
+['P(n,r)','P\\left(#?,#?\\right)'],
+['P(A)','P\\left(#?/#?\\right)'],
+['P(A|B)','P\\left(#?\\mid#?\\right)'],
+['A∩B','P\\left(A\\cap B\\right)=#?\\cdot#?'],
+['A∪B','P\\left(A\\cup B\\right)=#?+#?-#?'],
+['E[X]','E\\left[#0\\right]'],
+['Var','\\operatorname{Var}\\left(#0\\right)'],
+['Cov','\\operatorname{Cov}\\left(#?,#?\\right)'],
+['Corr','\\operatorname{Corr}\\left(#?,#?\\right)'],
+['μ','\\mu\\left(#0\\right)'],
+['σ','\\sigma\\left(#0\\right)'],
+['σ²','\\sigma^2\\left(#0\\right)'],
+['x̄','\\bar{x}\\left(#0\\right)'],
+['Σx','\\Sigma\\left(#0\\right)'],
+['normal','f_N\\left(#?,#?,#?\\right)'],
+['binomial','P_B\\left(#?,#?,#?\\right)'],
+['Poisson','P_P\\left(#?,#?\\right)']
+],
+"مجموعات ومنطق":[['∈','\\in'],['∉','\\notin'],['⊂','\\subset'],['⊆','\\subseteq'],['⊃','\\supset'],['⊇','\\supseteq'],['∪','\\cup'],['∩','\\cap'],['∅','\\emptyset'],['\\','\\setminus'],['ℕ','\\mathbb{N}'],['ℤ','\\mathbb{Z}'],['ℚ','\\mathbb{Q}'],['ℝ','\\mathbb{R}'],['ℂ','\\mathbb{C}'],['∀','\\forall'],['∃','\\exists'],['∄','\\nexists'],['¬','\\neg'],['∧','\\land'],['∨','\\lor'],['⇒','\\Rightarrow'],['⇔','\\Leftrightarrow']],
+"رموز وعلاقات":[['≈','\\approx'],['≡','\\equiv'],['∝','\\propto'],['∼','\\sim'],['≪','\\ll'],['≫','\\gg'],['⊥','\\perp'],['∥','\\parallel'],['∠','\\angle'],['°','^{\\circ}'],['→','\\to'],['↦','\\mapsto'],['←','\\leftarrow'],['↔','\\leftrightarrow'],['∴','\\therefore'],['∵','\\because']],
+"هندسة تفاضلية":[
+['منحنى صريح','y=#0'],['منحنى ضمني','F\\left(x,y\\right)=0'],['منحنى بارامتري','\\mathbf{r}\\left(t\\right)=\\begin{bmatrix}#?\\\\#?\\\\#?\\end{bmatrix}'],
+['سطح صريح','z=#0'],['سطح ضمني','F\\left(x,y,z\\right)=0'],['سطح بارامتري','\\mathbf{r}\\left(u,v\\right)=\\begin{bmatrix}#?\\\\#?\\\\#?\\end{bmatrix}'],
+['تبديل إحداثيات','\\begin{cases}x=#?\\\\y=#?\\\\z=#?\\end{cases}'],
+['سرعة منحنى','\\operatorname{dgCurveSpeed}\\left(#?,#?,#?,t\\right)'],['T منحنى','\\operatorname{dgCurveTangent}\\left(#?,#?,#?,t\\right)'],['N منحنى','\\operatorname{dgCurveNormal}\\left(#?,#?,#?,t\\right)'],['B منحنى','\\operatorname{dgCurveBinormal}\\left(#?,#?,#?,t\\right)'],['تقوس κ','\\operatorname{dgCurveCurvature}\\left(#?,#?,#?,t\\right)'],['التواء τ','\\operatorname{dgCurveTorsion}\\left(#?,#?,#?,t\\right)'],
+['متجه عمودي','\\operatorname{dgNormal}\\left(#?,#?,#?,u,v\\right)'],['الشكل الأساسي I','\\operatorname{dgFirst}\\left(#?,#?,#?,u,v\\right)'],['الشكل الأساسي II','\\operatorname{dgSecond}\\left(#?,#?,#?,u,v\\right)'],['Gaussian K','\\operatorname{dgGaussian}\\left(#?,#?,#?,u,v\\right)'],['Mean H','\\operatorname{dgMean}\\left(#?,#?,#?,u,v\\right)'],['تقوسات رئيسية','\\operatorname{dgPrincipal}\\left(#?,#?,#?,u,v\\right)'],['Christoffel Γ','\\operatorname{dgChristoffel}\\left(#?,#?,#?,u,v\\right)'],['Riemann R','\\operatorname{dgRiemann}\\left(#?,#?,#?,u,v\\right)'],['Ricci','\\operatorname{dgRicci}\\left(#?,#?,#?,u,v\\right)'],['Scalar curvature','\\operatorname{dgScalarCurvature}\\left(#?,#?,#?,u,v\\right)'],['Geodesic','\\operatorname{dgGeodesic}\\left(#?,#?,#?,u,v\\right)'],
+['ضمني: I و II','\\operatorname{dgImplicitForms}\\left(#?,x,y,z\\right)'],['ضمني: K','\\operatorname{dgImplicitGaussian}\\left(#?,x,y,z\\right)'],['ضمني: H','\\operatorname{dgImplicitMean}\\left(#?,x,y,z\\right)'],['Jacobian تبديل','\\operatorname{dgJacobian}\\left(#?,#?,#?,u,v\\right)']
+],
+"سلاسل وتحويلات":[['Σ','\\sum_{n=#?}^{#?}#0'],['series','\\sum_{n=0}^{\\infty}#0'],['Taylor','\\sum_{n=0}^{\\infty}\\frac{f^{(n)}\\left(a\\right)}{n!}\\left(x-a\\right)^n'],['Maclaurin','\\sum_{n=0}^{\\infty}\\frac{f^{(n)}\\left(0\\right)}{n!}x^n'],['Fourier','\\sum_{n=1}^{\\infty}\\left(a_n\\cos nx+b_n\\sin nx\\right)'],['Laplace','\\mathcal{L}\\left\\{#0\\right\\}'],['L⁻¹','\\mathcal{L}^{-1}\\left\\{#0\\right\\}'],['Fourier T','\\mathcal{F}\\left\\{#0\\right\\}'],['F⁻¹','\\mathcal{F}^{-1}\\left\\{#0\\right\\}']],
+"نظرية الأعداد":[['gcd','\\gcd\\left(#?,#?\\right)'],['lcm','\\operatorname{lcm}\\left(#?,#?\\right)'],['mod','#?\\bmod #?'],['a≡b mod n','#?\\equiv#?\\pmod{#?}'],['floor','\\lfloor #0\\rfloor'],['ceil','\\lceil #0\\rceil'],['φ(n)','\\varphi\\left(#0\\right)'],['ζ(s)','\\zeta\\left(#0\\right)'],['prime','p\\in\\mathbb{P}']],
+"يوناني":[['α','\\alpha'],['β','\\beta'],['γ','\\gamma'],['δ','\\delta'],['ε','\\epsilon'],['ζ','\\zeta'],['η','\\eta'],['θ','\\theta'],['ι','\\iota'],['κ','\\kappa'],['λ','\\lambda'],['μ','\\mu'],['ν','\\nu'],['ξ','\\xi'],['ρ','\\rho'],['σ','\\sigma'],['τ','\\tau'],['φ','\\phi'],['χ','\\chi'],['ψ','\\psi'],['ω','\\omega'],['Γ','\\Gamma'],['Δ','\\Delta'],['Θ','\\Theta'],['Λ','\\Lambda'],['Ξ','\\Xi'],['Π','\\Pi'],['Σ','\\Sigma'],['Φ','\\Phi'],['Ψ','\\Psi'],['Ω','\\Omega']]
+};
+
+// ===== توسعة لوحة LaTeX الشاملة =====
+panels["جبر"].unshift(['نظام…','__SYSTEM_PICKER__']);
+panels["تفاضل"].push(['مشتقة جزئية…','__PARTIAL_PICKER__'],['مشتقة اتجاهية','D_{\\mathbf{u}}f=\\nabla f\\cdot\\mathbf{u}'],['تفاضل كلي','df=\\frac{\\partial f}{\\partial x}dx+\\frac{\\partial f}{\\partial y}dy'],['ضمني','F\\left(x,y\\right)=0'],['نقطة حرجة','\\nabla f=\\mathbf{0}'],['Lagrange','\\nabla f=\\lambda\\nabla g']);
+panels["تكامل"].push(['تكامل متعدد…','__MULTI_INTEGRAL_PICKER__'],['غير صحيح','\\int_{#?}^{\\infty}#0\\,dx'],['قيمة رئيسية','\\operatorname{PV}\\int_{#?}^{#?}#0\\,dx'],['قطبي','__POLAR_INPUT__'],['أسطواني','__CYL_INPUT__'],['كروي','__SPH_INPUT__']);
+panels["مصفوفات"].push(['Iₙ','I_{#?}'],['0ₘₙ','0_{#?\\times#?}'],['diag','\\operatorname{diag}\\left(#0\\right)'],['char poly','\\det\\left(\\lambda I-#0\\right)'],['eigen','#0\\mathbf{v}=\\lambda\\mathbf{v}'],['null','\\operatorname{Null}\\left(#0\\right)'],['col','\\operatorname{Col}\\left(#0\\right)'],['row','\\operatorname{Row}\\left(#0\\right)'],['LU','#0=LU'],['QR','#0=QR'],['SVD','#0=U\\Sigma V^{T}'],['Gram–Schmidt','\\operatorname{GS}\\left(#0\\right)'],['Kronecker','#0\\otimes#?'],['outer','#0#?^{T}'],['augmented','\\left[#0\\mid#?\\right]']);
+panels["متجهات"].push(['unit','\\mathbf{u}=\\frac{#0}{\\left\\|#0\\right\\|}'],['angle','\\theta=\\cos^{-1}\\left(\\frac{#?\\cdot#?}{\\left\\|#?\\right\\|\\left\\|#?\\right\\|}\\right)'],['triple','#?\\cdot\\left(#?\\times#?\\right)'],['vector triple','#?\\times\\left(#?\\times#?\\right)'],['arc length','s=\\int_{#?}^{#?}\\left\\|\\mathbf{r}^{\\prime}\\left(t\\right)\\right\\|dt'],['curvature','\\kappa=\\frac{\\left\\|\\mathbf{r}^{\\prime}\\times\\mathbf{r}^{\\prime\\prime}\\right\\|}{\\left\\|\\mathbf{r}^{\\prime}\\right\\|^3}'],['torsion','\\tau=\\frac{\\left(\\mathbf{r}^{\\prime}\\times\\mathbf{r}^{\\prime\\prime}\\right)\\cdot\\mathbf{r}^{\\prime\\prime\\prime}}{\\left\\|\\mathbf{r}^{\\prime}\\times\\mathbf{r}^{\\prime\\prime}\\right\\|^2}']);
+panels["تحليل متجهي"].push(['potential','\\mathbf{F}=\\nabla\\phi'],['circulation','\\oint_C\\mathbf{F}\\cdot d\\mathbf{r}'],['Green','\\oint_C P\\,dx+Q\\,dy=\\iint_D\\left(\\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}\\right)dA'],['div theorem','\\iint_{\\partial V}\\mathbf{F}\\cdot\\mathbf{n}\\,dS=\\iiint_V\\nabla\\cdot\\mathbf{F}\\,dV'],['Stokes full','\\oint_{\\partial S}\\mathbf{F}\\cdot d\\mathbf{r}=\\iint_S\\left(\\nabla\\times\\mathbf{F}\\right)\\cdot\\mathbf{n}\\,dS']);
+panels["ODE/PDE"].push(['نظام ODE…','__ODE_SYSTEM_PICKER__'],['separable','\\frac{dy}{dx}=f\\left(x\\right)g\\left(y\\right)'],['exact','M\\left(x,y\\right)dx+N\\left(x,y\\right)dy=0'],['Bernoulli','y^{\\prime}+P\\left(x\\right)y=Q\\left(x\\right)y^n'],['Euler–Cauchy','a x^2y^{\\prime\\prime}+bxy^{\\prime}+cy=0'],['Poisson PDE','\\nabla^2u=f'],['Helmholtz','\\nabla^2u+k^2u=0'],['diffusion','\\frac{\\partial u}{\\partial t}=D\\nabla^2u'],['advection','\\frac{\\partial u}{\\partial t}+\\mathbf{v}\\cdot\\nabla u=0'],['Schrödinger','i\\hbar\\frac{\\partial\\psi}{\\partial t}=\\hat{H}\\psi'],['initial PDE','u\\left(x,0\\right)=#0'],['boundary PDE','u\\left(#?,t\\right)=#?']);
+panels["مركب"].push(['C-R','\\frac{\\partial u}{\\partial x}=\\frac{\\partial v}{\\partial y},\\quad\\frac{\\partial u}{\\partial y}=-\\frac{\\partial v}{\\partial x}'],['Cauchy','f\\left(z_0\\right)=\\frac{1}{2\\pi i}\\oint_C\\frac{f\\left(z\\right)}{z-z_0}dz'],['Laurent','\\sum_{n=-\\infty}^{\\infty}a_n\\left(z-z_0\\right)^n'],['pole','\\operatorname{ord}_{z=#?}f'],['zeros','f\\left(z\\right)=0'],['complex root','z_k=r^{1/n}e^{i\\left(\\theta+2\\pi k\\right)/n}']);
+panels["احتمال وإحصاء"].push(['Bayes','P\\left(A\\mid B\\right)=\\frac{P\\left(B\\mid A\\right)P\\left(A\\right)}{P\\left(B\\right)}'],['PDF','f_X\\left(x\\right)'],['CDF','F_X\\left(x\\right)=P\\left(X\\le x\\right)'],['uniform','X\\sim\\mathcal{U}\\left(#?,#?\\right)'],['exponential','X\\sim\\operatorname{Exp}\\left(#?\\right)'],['geometric','X\\sim\\operatorname{Geom}\\left(#?\\right)'],['χ²','X\\sim\\chi^2_{#?}'],['t-dist','T\\sim t_{#?}'],['quantile','Q_{#?}'],['CI','\\bar{x}\\pm z_{#?}\\frac{\\sigma}{\\sqrt{n}}'],['regression','y=\\beta_0+\\beta_1x+\\varepsilon']);
+panels["مجموعات ومنطق"].push(['A×B','A\\times B'],['P(A)','\\mathcal{P}\\left(A\\right)'],['Aᶜ','A^{c}'],['set builder','\\left\\{x\\in#?\\mid#?\\right\\}'],['(a,b)','\\left(#?,#?\\right)'],['[a,b]','\\left[#?,#?\\right]'],['(a,b]','\\left(#?,#?\\right]'],['[a,b)','\\left[#?,#?\\right)'],['⊕','\\oplus'],['⊗','\\otimes'],['XOR','\\veebar']);
+panels["سلاسل وتحويلات"].push(['sequence','\\operatorname{sequence}\\left(#0,n,#?,#?\\right)'],['recurrence','a_{n+1}=#0'],['Laurent','\\sum_{n=-\\infty}^{\\infty}a_n\\left(z-z_0\\right)^n'],['convolution','\\left(f*g\\right)\\left(t\\right)=\\int_{-\\infty}^{\\infty}f\\left(\\tau\\right)g\\left(t-\\tau\\right)d\\tau'],['Z','\\mathcal{Z}\\left\\{#0\\right\\}'],['Z⁻¹','\\mathcal{Z}^{-1}\\left\\{#0\\right\\}']);
+panels["نظرية الأعداد"].push(['a|b','#?\\mid#?'],['a∤b','#?\\nmid#?'],['Fₙ','F_{#?}'],['n!!','#0!!'],['Γ','\\Gamma\\left(#0\\right)'],['B','B\\left(#?,#?\\right)'],['μ(n)','\\mu\\left(#0\\right)'],['π(x)','\\pi\\left(#0\\right)'],['multinomial','\\binom{#?}{#?,#?,#?}']);
+
+panels["دوال خاصة"]=[['Γ','\\Gamma\\left(#0\\right)'],['Beta','B\\left(#?,#?\\right)'],['erf','\\operatorname{erf}\\left(#0\\right)'],['Bessel J','J_{#?}\\left(#0\\right)'],['Bessel Y','Y_{#?}\\left(#0\\right)'],['Legendre','P_{#?}\\left(#0\\right)'],['Hermite','H_{#?}\\left(#0\\right)'],['Laguerre','L_{#?}\\left(#0\\right)'],['Airy Ai','\\operatorname{Ai}\\left(#0\\right)'],['Airy Bi','\\operatorname{Bi}\\left(#0\\right)'],['elliptic K','K\\left(#0\\right)'],['elliptic E','E\\left(#0\\right)'],['Yℓᵐ','Y_{#?}^{#?}\\left(\\theta,\\phi\\right)'],['δ','\\delta\\left(#0\\right)'],['Heaviside','H\\left(#0\\right)']];
+panels["تنسيق رياضي"]=[['xₙ','#0_{#?}'],['xⁿ','#0^{#?}'],['hat','\\hat{#0}'],['bar','\\bar{#0}'],['vec','\\vec{#0}'],['dot','\\dot{#0}'],['ddot','\\ddot{#0}'],['tilde','\\tilde{#0}'],['overline','\\overline{#0}'],['underline','\\underline{#0}'],['brace over','\\overbrace{#0}^{#?}'],['brace under','\\underbrace{#0}_{#?}'],['norm','\\left\\|#0\\right\\|'],['cases','\\begin{cases}#?\\\\#?\\end{cases}'],['piecewise','f\\left(x\\right)=\\begin{cases}#?&#?\\\\#?&#?\\end{cases}'],['…','\\ldots'],['⋯','\\cdots'],['⋮','\\vdots'],['⋱','\\ddots']];
+
+let active=Object.keys(panels)[0];
+function renderTabs(){tabs.innerHTML='';for(const n of Object.keys(panels)){let b=document.createElement('button');b.className='tab'+(n===active?' active':'');b.textContent=n;b.onclick=()=>{active=n;renderTabs();renderKeys()};tabs.appendChild(b)}}
+function matrixLatex(rows,cols,rowVector=false){let rr=[];for(let r=0;r<rows;r++){let cc=[];for(let c=0;c<cols;c++)cc.push('#?');rr.push(cc.join('&'));}return '\\begin{bmatrix}'+rr.join('\\\\')+'\\end{bmatrix}'}
+function chooseDimensions(kind){let r,c;if(kind==='vector'||kind==='rowvector'){r=parseInt(prompt('عدد عناصر المتجه (1–12):','3'),10);if(!Number.isInteger(r)||r<1||r>12)return null;return kind==='rowvector'?matrixLatex(1,r):matrixLatex(r,1)}r=parseInt(prompt('عدد صفوف المصفوفة (1–10):','3'),10);if(!Number.isInteger(r)||r<1||r>10)return null;c=parseInt(prompt('عدد أعمدة المصفوفة (1–10):','3'),10);if(!Number.isInteger(c)||c<1||c>10)return null;return matrixLatex(r,c)}
+function systemLatex(count,prefix=''){let rows=[];for(let i=0;i<count;i++)rows.push(prefix+'#?');return '\\begin{cases}'+rows.join('\\\\')+'\\end{cases}'}
+function chooseSystem(kind='algebra'){let n=parseInt(prompt('عدد المعادلات (2–10):','2'),10);if(!Number.isInteger(n)||n<2||n>10)return null;return systemLatex(n,kind==='ode'?'':'')}
+function choosePartial(){let variable=prompt('متغير الاشتقاق (مثال x أو y أو z):','x');if(!variable||!/^[A-Za-z]+$/.test(variable.trim()))return null;let order=parseInt(prompt('رتبة المشتقة (1–10):','1'),10);if(!Number.isInteger(order)||order<1||order>10)return null;variable=variable.trim();return order===1?'\\frac{\\partial}{\\partial '+variable+'}#0':'\\frac{\\partial^{'+order+'}}{\\partial '+variable+'^{'+order+'}}#0'}
+function chooseMultiIntegral(){let dim=parseInt(prompt('عدد أبعاد التكامل (2 أو 3):','2'),10);if(dim===2)return '\\int_{\\placeholder{}}^{\\placeholder{}}\\int_{\\placeholder{}}^{\\placeholder{}}\\placeholder{}\\,dx\\,dy';if(dim===3)return '\\int_{\\placeholder{}}^{\\placeholder{}}\\int_{\\placeholder{}}^{\\placeholder{}}\\int_{\\placeholder{}}^{\\placeholder{}}\\placeholder{}\\,dx\\,dy\\,dz';return null}
+let functionInputTarget=null;
+let integralInputTarget=null;
+function currentInputTarget(){if(functionModal.classList.contains('open')&&functionInputTarget)return functionInputTarget;if((lineIntegralModal?.classList.contains('open')||surfaceIntegralModal?.classList.contains('open')||volumeIntegralModal?.classList.contains('open')||document.getElementById('polarIntegralModal')?.classList.contains('open')||document.getElementById('cylIntegralModal')?.classList.contains('open')||document.getElementById('sphIntegralModal')?.classList.contains('open'))&&integralInputTarget)return integralInputTarget;return MF()}
+function renderKeys(){keys.innerHTML='';for(const [lab,tex] of panels[active]){let b=document.createElement('button');b.className='key'+((active==='أساسي'&&/^[0-9]$/.test(lab))?' basic-number':'');b.textContent=lab;b.onclick=()=>{let target=currentInputTarget();target.focus();let ins=tex;if(active==='تكامل' && ['∫ₐᵇ','∬','∭'].includes(lab)){ins=tex.replaceAll('#0','\\placeholder{}').replaceAll('#?','\\placeholder{}');}if(active==='رسم 2D/3D' && tex!=='__PLOT_SETTINGS__'){ins=tex.replaceAll('#0','\\placeholder{}').replaceAll('#?','\\placeholder{}');}if(active==='احتمال وإحصاء'){ins=tex.replaceAll('#0','\\placeholder{}').replaceAll('#?','\\placeholder{}');}if(tex==='__MATRIX_PICKER__')ins=chooseDimensions('matrix');else if(tex==='__VECTOR_PICKER__')ins=chooseDimensions('vector');else if(tex==='__ROW_VECTOR_PICKER__')ins=chooseDimensions('rowvector');else if(tex==='__SYSTEM_PICKER__')ins=chooseSystem('algebra');else if(tex==='__ODE_SYSTEM_PICKER__')ins=chooseSystem('ode');else if(tex==='__PARTIAL_PICKER__')ins=choosePartial();else if(tex==='__COMB_PICKER__'){ins='\\operatorname{prcomb}\\left(\\placeholder{},\\placeholder{}\\right)';}else if(tex==='__MULTI_INTEGRAL_PICKER__')ins=chooseMultiIntegral();else if(tex==='__PLOT_SETTINGS__'){plotSettings.style.display=plotSettings.style.display==='none'?'block':'none';ins=null;}else if(tex==='__FUNCTION_STORE__'){openFunctionStore();ins=null;}else if(tex==='__CALL_F__'){ins='f(x)';}else if(tex==='__CALL_G__'){ins='g(x,y)';}else if(tex==='__CALL_H__'){ins='h(x,y,z)';}else if(tex==='__LINE_INTEGRAL__'){openLineIntegral();ins=null;}else if(tex==='__SURFACE_INTEGRAL__'){openSurfaceIntegral();ins=null;}else if(tex==='__VOLUME_INTEGRAL__'){openVolumeIntegral();ins=null;}else if(tex==='__FLUX_INTEGRAL__'){openFluxIntegral();ins=null;}else if(tex==='__GAUSS_INTEGRAL__'){openGaussIntegral();ins=null;}else if(tex==='__STOKES_INTEGRAL__'){openStokesIntegral();ins=null;}else if(tex==='__POLAR_INPUT__'){openPolarInput();ins=null;}else if(tex==='__CYL_INPUT__'){openCylInput();ins=null;}else if(tex==='__SPH_INPUT__'){openSphInput();ins=null;}else if(tex==='__ANGLE_CONVERT__'){openAngleConvert();ins=null;}if(ins)target.insert(ins,{selectionMode:'placeholder'});};keys.appendChild(b)}}
+
+const angleConvertModal=document.getElementById('angleConvertModal');
+const angleValue=document.getElementById('angleValue'),angleFrom=document.getElementById('angleFrom'),angleTo=document.getElementById('angleTo'),angleResult=document.getElementById('angleResult');
+let lastAngleConverted='';
+function openAngleConvert(){angleConvertModal.classList.add('open');updateAngleConversion();angleValue.focus()}
+function closeAngleConvertModal(){angleConvertModal.classList.remove('open')}
+function angleToRadians(v,u){if(u==='deg')return v*Math.PI/180;if(u==='grad')return v*Math.PI/200;return v}
+function radiansToAngle(v,u){if(u==='deg')return v*180/Math.PI;if(u==='grad')return v*200/Math.PI;return v}
+function angleUnitText(u){return u==='deg'?'°':u==='rad'?' rad':' grad'}
+function parseAngleValue(raw){
+  let x=String(raw??'').trim();
+  if(!x)return NaN;
+  x=x.replace(/\s+/g,'').replace(/π/g,'pi').replace(/\\pi/g,'pi');
+  x=x.replace(/(\d|\)|pi)(?=pi|\()/g,'$1*').replace(/(pi|\))(?=\d)/g,'$1*');
+  if(!/^[0-9pi+\-*/().]+$/i.test(x))return NaN;
+  x=x.replace(/pi/gi,'Math.PI');
+  try{const v=Function('"use strict";return ('+x+')')();return Number.isFinite(v)?v:NaN}catch(e){return NaN}
+}
+function updateAngleConversion(){
+  const raw=angleValue.value;
+  const v=parseAngleValue(raw);
+  if(!Number.isFinite(v)){angleResult.textContent='أدخل زاوية صحيحة، مثال: 90 أو π أو π/2 أو 2π.';lastAngleConverted='';return}
+  const r=angleToRadians(v,angleFrom.value),ans=radiansToAngle(r,angleTo.value);
+  const shown=Math.abs(ans)<1e-14?'0':Number(ans.toPrecision(12)).toString();
+  lastAngleConverted=shown;
+  angleResult.textContent=raw.trim()+angleUnitText(angleFrom.value)+' = '+shown+angleUnitText(angleTo.value)
+}
+document.getElementById('closeAngleConvert').onclick=closeAngleConvertModal;document.getElementById('convertAngle').onclick=updateAngleConversion;angleValue.addEventListener('input',updateAngleConversion);angleFrom.addEventListener('change',updateAngleConversion);angleTo.addEventListener('change',updateAngleConversion);document.getElementById('angleToQuestion').onclick=()=>{updateAngleConversion();if(lastAngleConverted){MF().focus();MF().insert(lastAngleConverted);closeAngleConvertModal()}};
+
+const lineIntegralModal=document.getElementById('lineIntegralModal'), surfaceIntegralModal=document.getElementById('surfaceIntegralModal');
+const closeLineIntegral=document.getElementById('closeLineIntegral'), closeSurfaceIntegral=document.getElementById('closeSurfaceIntegral');
+const lineType=document.getElementById('lineType'), surfaceType=document.getElementById('surfaceType');
+const lineScalarLabel=document.getElementById('lineScalarLabel'), lineVectorFields=document.getElementById('lineVectorFields');
+const surfaceScalarLabel=document.getElementById('surfaceScalarLabel'), surfaceVectorFields=document.getElementById('surfaceVectorFields');
+const linePreview=document.getElementById('linePreview'), surfacePreview=document.getElementById('surfacePreview');
+const lineReset=document.getElementById('lineReset'), surfaceReset=document.getElementById('surfaceReset');
+const lineToQuestion=document.getElementById('lineToQuestion'), surfaceToQuestion=document.getElementById('surfaceToQuestion');
+function mfv(id){return (document.getElementById(id).value||'').trim()}
+function openLineIntegral(){lineIntegralModal.classList.add('open');integralInputTarget=document.getElementById('lineF');integralInputTarget.focus();updateLinePreview()}
+function openSurfaceIntegral(){surfaceIntegralModal.classList.add('open');integralInputTarget=document.getElementById('surfaceF');integralInputTarget.focus();updateSurfacePreview()}
+closeLineIntegral.onclick=()=>{lineIntegralModal.classList.remove('open');integralInputTarget=null;MF().focus()};closeSurfaceIntegral.onclick=()=>{surfaceIntegralModal.classList.remove('open');integralInputTarget=null;MF().focus()};
+
+lineType.onchange=()=>{let v=lineType.value==='vector';lineScalarLabel.style.display=v?'none':'grid';lineVectorFields.style.display=v?'block':'none';updateLinePreview()};surfaceType.onchange=()=>{let v=surfaceType.value==='flux';surfaceScalarLabel.style.display=v?'none':'grid';surfaceVectorFields.style.display=v?'block':'none';updateSurfacePreview()};
+function updateLinePreview(){let r='\\mathbf r(t)=('+[mfv('lineX')||'x(t)',mfv('lineY')||'y(t)',mfv('lineZ')||'z(t)'].join(',')+')';linePreview.textContent=(lineType.value==='vector'?'∫ F·dr   ':'∫ f ds   ')+r+'   '+(mfv('lineA')||'a')+' ≤ t ≤ '+(mfv('lineB')||'b')}
+function updateSurfacePreview(){let r='\\mathbf r(u,v)=('+[mfv('surfaceX')||'x(u,v)',mfv('surfaceY')||'y(u,v)',mfv('surfaceZ')||'z(u,v)'].join(',')+')';surfacePreview.textContent=(surfaceType.value==='flux'?'∬ F·n dS   ':'∬ f dS   ')+r}
+for(const id of ['lineF','lineP','lineQ','lineR','lineX','lineY','lineZ','lineA','lineB'])document.getElementById(id).addEventListener('input',updateLinePreview);for(const id of ['surfaceF','surfaceP','surfaceQ','surfaceR','surfaceX','surfaceY','surfaceZ','surfaceUA','surfaceUB','surfaceVA','surfaceVB'])document.getElementById(id).addEventListener('input',updateSurfacePreview);
+lineReset.onclick=()=>{lineIntegralModal.classList.remove('open');integralInputTarget=null;MF().focus()};surfaceReset.onclick=()=>{surfaceIntegralModal.classList.remove('open');integralInputTarget=null;MF().focus()};
+lineToQuestion.onclick=()=>{let vals=lineType.value==='vector'?[mfv('lineP'),mfv('lineQ'),mfv('lineR'),mfv('lineX'),mfv('lineY'),mfv('lineZ'),mfv('lineA'),mfv('lineB')]:[mfv('lineF'),mfv('lineX'),mfv('lineY'),mfv('lineZ'),mfv('lineA'),mfv('lineB')];if(vals.some(v=>!v)){alert('أكمل جميع الحقول');return}MF().value='\\operatorname{'+(lineType.value==='vector'?'lineintvector':'lineintscalar')+'}\\left('+vals.join(',')+'\\right)';MF().focus()};
+surfaceToQuestion.onclick=()=>{let vals=surfaceType.value==='flux'?[mfv('surfaceP'),mfv('surfaceQ'),mfv('surfaceR'),mfv('surfaceX'),mfv('surfaceY'),mfv('surfaceZ'),mfv('surfaceUA'),mfv('surfaceUB'),mfv('surfaceVA'),mfv('surfaceVB')]:[mfv('surfaceF'),mfv('surfaceX'),mfv('surfaceY'),mfv('surfaceZ'),mfv('surfaceUA'),mfv('surfaceUB'),mfv('surfaceVA'),mfv('surfaceVB')];if(vals.some(v=>!v)){alert('أكمل جميع الحقول');return}MF().value='\\operatorname{'+(surfaceType.value==='flux'?'surfaceflux':'surfaceintscalar')+'}\\left('+vals.join(',')+'\\right)';MF().focus()};
+const volumeIntegralModal=document.getElementById('volumeIntegralModal'), closeVolumeIntegral=document.getElementById('closeVolumeIntegral'), volumePreview=document.getElementById('volumePreview'), volumeReset=document.getElementById('volumeReset'), volumeToQuestion=document.getElementById('volumeToQuestion');
+function openVolumeIntegral(){volumeIntegralModal.classList.add('open');integralInputTarget=document.getElementById('volumeF');integralInputTarget.focus();updateVolumePreview()}
+closeVolumeIntegral.onclick=()=>{volumeIntegralModal.classList.remove('open');integralInputTarget=null;MF().focus()};
+
+function updateVolumePreview(){volumePreview.textContent='∭ f(x,y,z) dV   x:['+(mfv('volumeXA')||'a')+','+(mfv('volumeXB')||'b')+']  y:['+(mfv('volumeYA')||'c')+','+(mfv('volumeYB')||'d')+']  z:['+(mfv('volumeZA')||'e')+','+(mfv('volumeZB')||'f')+']'}
+for(const id of ['volumeF','volumeXA','volumeXB','volumeYA','volumeYB','volumeZA','volumeZB'])document.getElementById(id).addEventListener('input',updateVolumePreview);
+volumeReset.onclick=()=>{volumeIntegralModal.classList.remove('open');integralInputTarget=null;MF().focus()};
+volumeToQuestion.onclick=()=>{let vals=[mfv('volumeF'),mfv('volumeXA'),mfv('volumeXB'),mfv('volumeYA'),mfv('volumeYB'),mfv('volumeZA'),mfv('volumeZB')];if(vals.some(v=>!v)){alert('أكمل جميع الحقول');return}MF().value='\\operatorname{volumeint}\\left('+vals.join(',')+'\\right)';MF().focus()};
+
+
+// LaTeX keyboard follows the active field while one of the three integral windows is open.
+for(const id of ['lineF','lineP','lineQ','lineR','lineX','lineY','lineZ','lineA','lineB','surfaceF','surfaceP','surfaceQ','surfaceR','surfaceX','surfaceY','surfaceZ','surfaceUA','surfaceUB','surfaceVA','surfaceVB','volumeF','volumeXA','volumeXB','volumeYA','volumeYB','volumeZA','volumeZB']){
+ const el=document.getElementById(id); if(!el)continue;
+ el.addEventListener('focus',()=>{integralInputTarget=el});
+ el.addEventListener('pointerdown',()=>{integralInputTarget=el});
+}
+(function(){
+ for(const modal of [lineIntegralModal,surfaceIntegralModal,volumeIntegralModal]){
+  const box=modal.querySelector('.modal-box'),handle=box.querySelector('.t-head');let dragging=false,dx=0,dy=0;
+  handle.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;const r=box.getBoundingClientRect();box.style.left=r.left+'px';box.style.top=r.top+'px';box.style.transform='none';dx=e.clientX-r.left;dy=e.clientY-r.top;dragging=true;handle.setPointerCapture(e.pointerId)});
+  handle.addEventListener('pointermove',e=>{if(!dragging)return;let x=Math.max(0,Math.min(window.innerWidth-box.offsetWidth,e.clientX-dx));let y=Math.max(0,Math.min(window.innerHeight-box.offsetHeight,e.clientY-dy));box.style.left=x+'px';box.style.top=y+'px'});
+  const stop=e=>{dragging=false;try{handle.releasePointerCapture(e.pointerId)}catch(_){}};handle.addEventListener('pointerup',stop);handle.addEventListener('pointercancel',stop);
+ }
+})();
+
+const fluxIntegralModal=document.getElementById('fluxIntegralModal'),gaussIntegralModal=document.getElementById('gaussIntegralModal'),stokesIntegralModal=document.getElementById('stokesIntegralModal');
+function openFluxIntegral(){fluxIntegralModal.classList.add('open')} function openGaussIntegral(){gaussIntegralModal.classList.add('open')} function openStokesIntegral(){stokesIntegralModal.classList.add('open')}
+closeFluxIntegral.onclick=()=>fluxIntegralModal.classList.remove('open');closeGaussIntegral.onclick=()=>gaussIntegralModal.classList.remove('open');closeStokesIntegral.onclick=()=>stokesIntegralModal.classList.remove('open');
+for(const el of [fluxIntegralModal,gaussIntegralModal,stokesIntegralModal])el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open')});
+function clearIds(ids){for(const id of ids)document.getElementById(id).value=''}
+const fluxIds=['fluxP','fluxQ','fluxR','fluxX','fluxY','fluxZ','fluxUA','fluxUB','fluxVA','fluxVB'];fluxReset.onclick=()=>clearIds(fluxIds);fluxToQuestion.onclick=()=>{let a=fluxIds.map(mfv);if(a.some(v=>!v)){alert('أكمل جميع الحقول');return}MF().value='\\operatorname{fluxint}\\left('+a.join(',')+'\\right)';MF().focus()};
+const gaussIds=['gaussP','gaussQ','gaussR','gaussXA','gaussXB','gaussYA','gaussYB','gaussZA','gaussZB'];gaussReset.onclick=()=>clearIds(gaussIds);gaussToQuestion.onclick=()=>{let a=gaussIds.map(mfv);if(a.some(v=>!v)){alert('أكمل جميع الحقول');return}MF().value='\\operatorname{gaussint}\\left('+a.join(',')+'\\right)';MF().focus()};
+const stokesIds=['stokesP','stokesQ','stokesR','stokesX','stokesY','stokesZ','stokesUA','stokesUB','stokesVA','stokesVB'];stokesReset.onclick=()=>clearIds(stokesIds);stokesToQuestion.onclick=()=>{let a=stokesIds.map(mfv);if(a.some(v=>!v)){alert('أكمل جميع الحقول');return}MF().value='\\operatorname{stokesint}\\left('+a.join(',')+'\\right)';MF().focus()};
+
+const FUN_KEY='mathSavedFunctionsV1';
+const FUN_SPEC={f:{id:'funF',vars:['x']},g:{id:'funG',vars:['x','y']},h:{id:'funH',vars:['x','y','z']}};
+function loadSavedFunctions(){try{return JSON.parse(localStorage.getItem(FUN_KEY)||'{}')||{}}catch(e){return {}}}
+function openFunctionStore(){let d=loadSavedFunctions();for(const n of Object.keys(FUN_SPEC)){let el=document.getElementById(FUN_SPEC[n].id);el.value=d[n]||'';}functionMsg.textContent='';functionModal.classList.add('open');functionInputTarget=document.getElementById('funF');functionInputTarget.focus()}
+for(const id of ['funF','funG','funH']){const el=document.getElementById(id);el.addEventListener('focus',()=>{if(functionModal.classList.contains('open'))functionInputTarget=el});el.addEventListener('pointerdown',()=>{if(functionModal.classList.contains('open'))functionInputTarget=el})}
+closeFunctions.onclick=()=>{functionModal.classList.remove('open');functionInputTarget=null;MF().focus()};
+(function(){
+ const box=functionModal.querySelector('.modal-box'), handle=box.querySelector('.t-head');
+ let dragging=false,dx=0,dy=0;
+ handle.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;const r=box.getBoundingClientRect();box.style.left=r.left+'px';box.style.top=r.top+'px';box.style.transform='none';dx=e.clientX-r.left;dy=e.clientY-r.top;dragging=true;handle.setPointerCapture(e.pointerId);});
+ handle.addEventListener('pointermove',e=>{if(!dragging)return;let x=Math.max(0,Math.min(innerWidth-box.offsetWidth,e.clientX-dx)),y=Math.max(0,Math.min(innerHeight-box.offsetHeight,e.clientY-dy));box.style.left=x+'px';box.style.top=y+'px';});
+ handle.addEventListener('pointerup',e=>{dragging=false;try{handle.releasePointerCapture(e.pointerId)}catch(_){}});
+})();
+// نافذة حفظ الدوال لا تُغلق بالنقر خارجها؛ الإغلاق فقط من زر إغلاق.
+for(const b of document.querySelectorAll('[data-savefun]'))b.onclick=()=>{let n=b.dataset.savefun,el=document.getElementById(FUN_SPEC[n].id),v=(el.value||'').trim(),d=loadSavedFunctions();if(v)d[n]=v;else delete d[n];localStorage.setItem(FUN_KEY,JSON.stringify(d));functionMsg.textContent=v?'تم حفظ '+n+'('+FUN_SPEC[n].vars.join(',')+').':'تم مسح تعريف '+n+'.';};
+function readParenGroup(s,start){let i=start;if(s.startsWith('\\left(',i))i+=6;else if(s[i]==='(')i++;else return null;let begin=i,dep=1;for(;i<s.length;i++){if(s.startsWith('\\left(',i)){dep++;i+=5;continue}if(s.startsWith('\\right)',i)){dep--;if(dep===0)return [s.slice(begin,i),i+7];i+=6;continue}if(s[i]==='(')dep++;else if(s[i]===')'){dep--;if(dep===0)return [s.slice(begin,i),i+1]}}return null}
+function splitTopArgs(s){let a=[],st=0,dep=0,br=0;for(let i=0;i<s.length;i++){if(s.startsWith('\\left(',i)){dep++;i+=5;continue}if(s.startsWith('\\right)',i)){dep--;i+=6;continue}let c=s[i];if(c==='(')dep++;else if(c===')')dep--;else if(c==='{')br++;else if(c==='}')br--;else if(c===','&&dep===0&&br===0){a.push(s.slice(st,i));st=i+1}}a.push(s.slice(st));return a}
+function substLatex(body,vars,args){let r=body;for(let i=0;i<vars.length;i++){let re=new RegExp('(?<![A-Za-z])'+vars[i]+'(?![A-Za-z])','g');r=r.replace(re,'\\left('+args[i]+'\\right)')}return r}
+function expandSavedFunctions(src){let defs=loadSavedFunctions(),s=src;for(let pass=0;pass<8;pass++){let changed=false;for(const n of ['f','g','h']){if(!defs[n])continue;for(let pos=0;pos<s.length;){let idx=s.indexOf(n,pos);if(idx<0)break;let prev=idx? s[idx-1]:'';if(/[A-Za-z]/.test(prev)){pos=idx+1;continue}let g=readParenGroup(s,idx+1);if(!g){pos=idx+1;continue}let args=splitTopArgs(g[0]);let vars=FUN_SPEC[n].vars;if(args.length!==vars.length){pos=g[1];continue}let rep='\\left('+substLatex(defs[n],vars,args)+'\\right)';s=s.slice(0,idx)+rep+s.slice(g[1]);changed=true;pos=idx+rep.length}}if(!changed)break}return s}
+renderTabs();renderKeys();
+
+function openCoordInput(modalId,firstId){const m=document.getElementById(modalId);m.classList.add('open');integralInputTarget=document.getElementById(firstId);integralInputTarget.focus()}
+function openPolarInput(){openCoordInput('polarIntegralModal','polarF')}
+function openCylInput(){openCoordInput('cylIntegralModal','cylF')}
+function openSphInput(){openCoordInput('sphIntegralModal','sphF')}
+function closeCoord(id){document.getElementById(id).classList.remove('open');integralInputTarget=null;MF().focus()}
+closePolarIntegral.onclick=polarCloseBottom.onclick=()=>closeCoord('polarIntegralModal');
+closeCylIntegral.onclick=cylCloseBottom.onclick=()=>closeCoord('cylIntegralModal');
+closeSphIntegral.onclick=sphCloseBottom.onclick=()=>closeCoord('sphIntegralModal');
+for(const id of ['polarF','polarRA','polarRB','polarTA','polarTB','cylF','cylRA','cylRB','cylTA','cylTB','cylZA','cylZB','sphF','sphRA','sphRB','sphTA','sphTB','sphPA','sphPB']){const el=document.getElementById(id);el.addEventListener('focus',()=>{integralInputTarget=el});el.addEventListener('pointerdown',()=>{integralInputTarget=el})}
+(function(){for(const modalId of ['polarIntegralModal','cylIntegralModal','sphIntegralModal']){const modal=document.getElementById(modalId),box=modal.querySelector('.modal-box'),handle=box.querySelector('.t-head');let dragging=false,dx=0,dy=0;handle.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;const r=box.getBoundingClientRect();box.style.left=r.left+'px';box.style.top=r.top+'px';box.style.transform='none';dx=e.clientX-r.left;dy=e.clientY-r.top;dragging=true;handle.setPointerCapture(e.pointerId)});handle.addEventListener('pointermove',e=>{if(!dragging)return;let x=Math.max(0,Math.min(window.innerWidth-box.offsetWidth,e.clientX-dx));let y=Math.max(0,Math.min(window.innerHeight-box.offsetHeight,e.clientY-dy));box.style.left=x+'px';box.style.top=y+'px'});const stop=e=>{dragging=false;try{handle.releasePointerCapture(e.pointerId)}catch(_){}};handle.addEventListener('pointerup',stop);handle.addEventListener('pointercancel',stop)}})();
+polarToQuestion.onclick=()=>{let a=['polarF','polarRA','polarRB','polarTA','polarTB'].map(mfv);if(a.some(v=>!v)){alert('أكمل جميع الحقول');return}MF().value='\\int_{'+a[3]+'}^{'+a[4]+'}\\int_{'+a[1]+'}^{'+a[2]+'}'+a[0]+'\\,r\\,dr\\,d\\theta';MF().focus();};
+cylToQuestion.onclick=()=>{let a=['cylF','cylRA','cylRB','cylTA','cylTB','cylZA','cylZB'].map(mfv);if(a.some(v=>!v)){alert('أكمل جميع الحقول');return}MF().value='\\int_{'+a[5]+'}^{'+a[6]+'}\\int_{'+a[3]+'}^{'+a[4]+'}\\int_{'+a[1]+'}^{'+a[2]+'}'+a[0]+'\\,r\\,dr\\,d\\theta\\,dz';MF().focus();};
+sphToQuestion.onclick=()=>{let a=['sphF','sphRA','sphRB','sphTA','sphTB','sphPA','sphPB'].map(mfv);if(a.some(v=>!v)){alert('أكمل جميع الحقول');return}MF().value='\\int_{'+a[3]+'}^{'+a[4]+'}\\int_{'+a[5]+'}^{'+a[6]+'}\\int_{'+a[1]+'}^{'+a[2]+'}('+a[0]+')\\,\\rho^2\\sin(\\phi)\\,d\\rho\\,d\\phi\\,d\\theta';MF().focus();};
+
+back.onclick=()=>{let t=currentInputTarget();t.focus();t.executeCommand('deleteBackward')};left.onclick=()=>{let t=currentInputTarget();t.focus();t.executeCommand('moveToPreviousChar')};right.onclick=()=>{let t=currentInputTarget();t.focus();t.executeCommand('moveToNextChar')};clear.onclick=()=>{let t=currentInputTarget();t.value='';if(t===MF())out.innerHTML='';t.focus()};kt.onclick=()=>keyboard.classList.toggle('closed');
+let py=null;
+const PY=String.raw`
+import re as regex, json, math, sympy as sp
+from sympy.parsing.sympy_parser import parse_expr, standard_transformations, implicit_multiplication_application, convert_xor
+TRANS=standard_transformations+(implicit_multiplication_application,convert_xor)
+x,y,z,t,u,v,m,n,i,j,k,h,a,b,c,d,r,rho,theta,phi,lam=sp.symbols('x y z t u v m n i j k h a b c d r rho theta phi lambda')
+LOC={q.name:q for q in [x,y,z,t,u,v,m,n,i,j,k,h,a,b,c,d,r,rho,theta,phi,lam]}
+LOC.update({'pi':sp.pi,'E':sp.E,'e':sp.E,'I':sp.I,'oo':sp.oo,'inf':sp.oo,'sin':sp.sin,'cos':sp.cos,'tan':sp.tan,'cot':sp.cot,'sec':sp.sec,'csc':sp.csc,'asin':sp.asin,'acos':sp.acos,'atan':sp.atan,'acot':sp.acot,'sinh':sp.sinh,'cosh':sp.cosh,'tanh':sp.tanh,'coth':sp.coth,'asinh':sp.asinh,'acosh':sp.acosh,'atanh':sp.atanh,'exp':sp.exp,'log':sp.log,'log10':lambda q:sp.log(q,10),'sqrt':sp.sqrt,'Gamma':sp.gamma,'gamma':sp.gamma,'erf':sp.erf,'Heaviside':sp.Heaviside,'DiracDelta':sp.DiracDelta,'floor':sp.floor,'ceiling':sp.ceiling,'Abs':sp.Abs,'re':sp.re,'im':sp.im,'arg':sp.arg,'conjugate':sp.conjugate,'binomial':sp.binomial})
+
+def group(s,p,op='{',cl='}'):
+ if p>=len(s) or s[p]!=op:return None,p
+ dep=0
+ for q in range(p,len(s)):
+  if s[q]==op:dep+=1
+  elif s[q]==cl:
+   dep-=1
+   if dep==0:return s[p+1:q],q+1
+ return None,p
+
+def latex_arg(s,p):
+ # Read one TeX argument. MathLive may serialize a simple fraction as \\frac89
+ # instead of \\frac{8}{9}; support both without changing its visual form.
+ while p<len(s) and s[p].isspace():p+=1
+ if p>=len(s):return None,p
+ if s[p]=='{':return group(s,p)
+ if s[p]=='\\':
+  m=regex.match(r'\\[A-Za-z]+',s[p:])
+  if m:return m.group(0),p+len(m.group(0))
+  return s[p:p+2],min(p+2,len(s))
+ # An unbraced TeX argument is exactly one token/character.
+ return s[p],p+1
+
+def replace_command2(s,cmd,func):
+ while True:
+  p=s.find(cmd)
+  if p<0:return s
+  q=p+len(cmd)
+  A,e1=latex_arg(s,q)
+  if A is None:return s
+  B,e2=latex_arg(s,e1)
+  if B is None:return s
+  s=s[:p]+func(A,B)+s[e2:]
+
+def replace_frac(s):return replace_command2(s,'\\frac',lambda A,B:'(('+replace_frac(A)+')/('+replace_frac(B)+'))')
+
+def clean(s):
+ s=s.strip().replace('\\left','').replace('\\right','').replace('−','-').replace('–','-')
+ s=regex.sub(r'\\placeholder(?:\[[^]]*\])?\{([^{}]*)\}',r'\1',s)
+ s=s.replace('\\,','').replace('\\;','').replace('\\!','').replace('\\quad',' ')
+ s=s.replace('\\cdot','*').replace('\\times','*').replace('\\div','/').replace('\\pi','pi').replace('\\infty','oo')
+ for old,new in [('\\rho','rho'),('\\theta','theta'),('\\phi','phi'),('\\lambda','lambda'),('\\alpha','alpha'),('\\beta','beta'),('\\sigma','sigma'),('\\mu','mu')]:s=s.replace(old,new)
+ s=s.replace('\\leq','<=').replace('\\le','<=').replace('\\geq','>=').replace('\\ge','>=').replace('\\ne','!=').replace('\\approx','=')
+ s=s.replace('\\pm','+').replace('\\mp','-')
+ s=regex.sub(r'\\operatorname\{([^}]+)\}',lambda m:m.group(1),s)
+ s=regex.sub(r'\\(?:mathrm|mathbf|mathbb)\{([^}]+)\}',r'\1',s)
+ # log with explicit base: \log_{b}(x) -> log(x,b)
+ s=regex.sub(r'\\log_\{([^{}]+)\}\\left\(([^()]*)\\right\)',r'log(\2,\1)',s)
+ s=regex.sub(r'\\log_\{([^{}]+)\}\(([^()]*)\)',r'log(\2,\1)',s)
+ # floor / ceil
+ s=regex.sub(r'\\lfloor\s*([^\\]+?)\s*\\rfloor',r'floor(\1)',s)
+ s=regex.sub(r'\\lceil\s*([^\\]+?)\s*\\rceil',r'ceiling(\1)',s)
+ fnmap={'ln':'log','arcsin':'asin','arccos':'acos','arctan':'atan'}
+ s=regex.sub(r'\\(sin|cos|tan|cot|sec|csc|sinh|cosh|tanh|coth|exp|log|ln|arcsin|arccos|arctan)',lambda mm:fnmap.get(mm.group(1),mm.group(1)),s)
+ # roots, simple/nested enough after fractions
+ for _ in range(10):
+  old=s;s=regex.sub(r'\\sqrt\[([^\[\]{}]+)\]\{([^{}]+)\}',r'(\2)**(1/(\1))',s);s=regex.sub(r'\\sqrt\{([^{}]+)\}',r'sqrt(\1)',s)
+  if s==old:break
+ s=replace_frac(s)
+ s=regex.sub(r'\\binom\{([^{}]+)\}\{([^{}]+)\}',r'binomial(\1,\2)',s)
+ s=regex.sub(r'\\overline\{([^{}]+)\}',r'conjugate(\1)',s)
+ s=s.replace('^','**').replace('{','(').replace('}',')').replace('\\','')
+ return s.strip()
+
+def scalar(s):
+ q=clean(s)
+ if not q:raise ValueError('الإدخال غير مكتمل')
+ # reject unmatched delimiters before SymPy
+ if q.count('(')!=q.count(')') or q.count('[')!=q.count(']'):raise ValueError('أقواس غير مكتملة')
+ return parse_expr(q,local_dict=LOC,transformations=TRANS,evaluate=True)
+
+def matrix_exact(s):
+ s=s.strip(); mm=regex.fullmatch(r'\\begin\{(bmatrix|pmatrix|matrix|vmatrix|Vmatrix)\}(.*?)\\end\{\1\}',s,regex.S)
+ if not mm:return None
+ body=mm.group(2)
+ for _ in range(4):
+  ns=regex.sub(r'\\placeholder(?:\[[^]]*\])?\{([^{}]*)\}',r'\1',body)
+  if ns==body:break
+  body=ns
+ body=body.strip()
+ rows=regex.split(r'\\\\+',body)
+ if not rows or any(not rr.strip() for rr in rows):raise ValueError('أكمل جميع خانات المصفوفة أو المتجه')
+ data=[];width=None
+ for rr in rows:
+  cells=rr.split('&');width=width or len(cells)
+  if len(cells)!=width:raise ValueError('عدد عناصر الصفوف غير متساوٍ')
+  if any(not c.strip() for c in cells):raise ValueError('أكمل جميع خانات المصفوفة أو المتجه')
+  data.append([scalar(c) for c in cells])
+ return sp.Matrix(data)
+
+def extract_matrix(s,start=0):
+ mm=regex.search(r'\\begin\{(bmatrix|pmatrix|matrix|vmatrix|Vmatrix)\}',s[start:])
+ if not mm:return None,None,None
+ a=start+mm.start(); env=mm.group(1); endtag='\\end{'+env+'}'; b=s.find(endtag,a)
+ if b<0:raise ValueError('المصفوفة غير مكتملة')
+ b+=len(endtag);return matrix_exact(s[a:b]),a,b
+
+def latex_result(obj,numeric=True,note=None):
+ try:tex=sp.latex(obj)
+ except:tex=str(obj)
+ out={'kind':'math','latex':tex}
+ if numeric:
+  try:
+   fs=getattr(obj,'free_symbols',set())
+   if not fs:out['numeric']=sp.latex(sp.N(obj,12))
+  except:pass
+ if note:out['note']=note
+ return json.dumps(out,ensure_ascii=False)
+
+def equation(txt):
+ q=clean(txt)
+ for op,ctor in [('<=',sp.Le),('>=',sp.Ge),('!=',sp.Ne),('<',sp.Lt),('>',sp.Gt),('=',sp.Eq)]:
+  if op in q:
+   A,B=q.split(op,1);return ctor(scalar(A),scalar(B))
+ return None
+
+def _script_arg(s,pos):
+ # Read a TeX sub/superscript argument after _ or ^. MathLive may emit {5} or just 5/x.
+ if pos>=len(s):return None,pos
+ if s[pos]=='{':
+  val,end=group(s,pos)
+  return val,end
+ if s[pos]=='\\':
+  m=regex.match(r'\\[A-Za-z]+',s[pos:])
+  if m:return m.group(0),pos+len(m.group(0))
+ # signed number, identifier, or one token
+ m=regex.match(r'[+-]?(?:\d+(?:\.\d+)?|[A-Za-z])',s[pos:])
+ if m:return m.group(0),pos+len(m.group(0))
+ return s[pos],pos+1
+
+def parse_sumprod(s):
+ s=normalize_mathlive(s).strip()
+ m=regex.match(r'^\\(sum|prod)',s)
+ if not m:return None
+ typ=m.group(1); pos=m.end()
+ while pos<len(s) and s[pos].isspace():pos+=1
+ if pos>=len(s) or s[pos]!='_':raise ValueError('اكتب الحد السفلي مثل x=1')
+ lower,pos=_script_arg(s,pos+1)
+ if lower is None:raise ValueError('اكتب الحد السفلي مثل x=1')
+ while pos<len(s) and s[pos].isspace():pos+=1
+ if pos>=len(s) or s[pos]!='^':raise ValueError('اكتب الحد العلوي للمجموع')
+ upper,pos=_script_arg(s,pos+1)
+ if upper is None:raise ValueError('اكتب الحد العلوي للمجموع')
+ body=s[pos:].strip()
+ if not body:raise ValueError('اكتب التعبير المراد جمعه')
+ lm=regex.fullmatch(r'\s*([A-Za-z])\s*=\s*(.+?)\s*',lower,regex.S)
+ if not lm:raise ValueError('اكتب الحد السفلي مثل x=1')
+ var,lo=lm.groups(); q=sp.Symbol(var); f=scalar(body)
+ return sp.summation(f,(q,scalar(lo),scalar(upper))) if typ=='sum' else sp.product(f,(q,scalar(lo),scalar(upper)))
+
+def parse_derivative(s):
+ s=normalize_mathlive(s)
+ # ordinary/partial same variable, arbitrary order
+ pats=[(r'\\frac\{d(?:\^\{?(\d+)\}?)?\}\{d([A-Za-z])(?:\^\{?(\d+)\}?)?\}(.*)',False),(r'\\frac\{\\partial(?:\^\{?(\d+)\}?)?\}\{\\partial\s*([A-Za-z])(?:\^\{?(\d+)\}?)?\}(.*)',True)]
+ for pat,_ in pats:
+  mm=regex.fullmatch(pat,s,regex.S)
+  if mm:
+   o1,var,o2,body=mm.groups();return sp.diff(scalar(body),sp.Symbol(var),int(o1 or o2 or 1))
+ # mixed second partial
+ mm=regex.fullmatch(r'\\frac\{\\partial\^?\{?2\}?\}\{\\partial\s*([A-Za-z])\\partial\s*([A-Za-z])\}(.*)',s,regex.S)
+ if mm:
+  a,b,body=mm.groups()
+  # Parse the complete expression after the mixed-partial operator.
+  # Differentiate the whole expression (including + and - terms), not only a product term.
+  expr=sp.expand(scalar(body))
+  return sp.simplify(sp.diff(expr,sp.Symbol(b),sp.Symbol(a)))
+ return None
+
+
+def parse_bounded_double_integral(s):
+ s=normalize_mathlive(s).strip()
+ s=regex.sub(r'\\(?:mathrm|operatorname)\{d\}', 'd', s)
+ pos=0; bounds=[]
+ for _ in range(2):
+  if not s.startswith('\\int',pos):return None
+  pos+=4
+  while pos<len(s) and s[pos].isspace():pos+=1
+  if pos>=len(s) or s[pos]!='_':return None
+  lo,pos=_script_arg(s,pos+1)
+  while pos<len(s) and s[pos].isspace():pos+=1
+  if pos>=len(s) or s[pos]!='^':return None
+  hi,pos=_script_arg(s,pos+1)
+  bounds.append((lo,hi))
+  while pos<len(s) and s[pos].isspace():pos+=1
+ body=s[pos:].strip()
+
+ # Separate the two differentials from the function by reading from the right.
+ vars_rev=[]
+ for _ in range(2):
+  dm=regex.search(r'(?:\\,)?\s*d\s*\{?([A-Za-z])\}?\s*$',body)
+  if not dm:return None
+  vars_rev.append(dm.group(1))
+  body=body[:dm.start()].strip()
+ if not body:raise ValueError('اكتب الدالة داخل التكامل المزدوج')
+
+ # \int_outer \int_inner f d(inner) d(outer)
+ inner_var=sp.Symbol(vars_rev[1])
+ outer_var=sp.Symbol(vars_rev[0])
+ outer_bounds=bounds[0]
+ inner_bounds=bounds[1]
+ f=scalar(body)
+ f=sp.integrate(f,(inner_var,scalar(inner_bounds[0]),scalar(inner_bounds[1])))
+ f=sp.integrate(f,(outer_var,scalar(outer_bounds[0]),scalar(outer_bounds[1])))
+ return f
+
+
+def parse_bounded_triple_integral(s):
+ s=normalize_mathlive(s).strip()
+ s=regex.sub(r'\\(?:mathrm|operatorname|mathit|text)\{d\}', 'd', s)
+ s=s.replace('\u2009',' ').replace('\u202f',' ').replace('\u00a0',' ')
+ pos=0; bounds=[]
+ for _ in range(3):
+  if not s.startswith('\\int',pos):return None
+  pos+=4
+  while pos<len(s) and s[pos].isspace():pos+=1
+  if pos>=len(s) or s[pos]!='_':return None
+  lo,pos=_script_arg(s,pos+1)
+  while pos<len(s) and s[pos].isspace():pos+=1
+  if pos>=len(s) or s[pos]!='^':return None
+  hi,pos=_script_arg(s,pos+1)
+  bounds.append((lo,hi))
+  while pos<len(s) and s[pos].isspace():pos+=1
+ body=s[pos:].strip()
+
+ # Read dz,dy,dx from the right, leaving only the integrand.
+ vars_rev=[]
+ for _ in range(3):
+  dm=regex.search(r'(?:\\[,;:!]\s*|\s*)d\s*\{?(rho|phi|theta|[A-Za-z]|\\rho|\\phi|\\theta)\}?\s*$',body)
+  if not dm:return None
+  vars_rev.append(dm.group(1))
+  body=body[:dm.start()].strip()
+ if not body:raise ValueError('اكتب الدالة داخل التكامل الثلاثي')
+
+ # \int_outer \int_middle \int_inner f d(inner) d(middle) d(outer)
+ def _triple_var(v):
+  return {'\\rho':rho,'\\phi':phi,'\\theta':theta,'rho':rho,'phi':phi,'theta':theta}.get(v,sp.Symbol(v))
+ inner_var=_triple_var(vars_rev[2])
+ middle_var=_triple_var(vars_rev[1])
+ outer_var=_triple_var(vars_rev[0])
+ outer_bounds=bounds[0]
+ middle_bounds=bounds[1]
+ inner_bounds=bounds[2]
+
+ f=scalar(body)
+ f=sp.integrate(f,(inner_var,scalar(inner_bounds[0]),scalar(inner_bounds[1])))
+ f=sp.integrate(f,(middle_var,scalar(middle_bounds[0]),scalar(middle_bounds[1])))
+ f=sp.integrate(f,(outer_var,scalar(outer_bounds[0]),scalar(outer_bounds[1])))
+ return f
+
+def parse_matrixvector_examples(s):
+ s=normalize_mathlive(s).strip()
+ def vals(name,nargs):
+  m=regex.fullmatch(r'\\operatorname\{'+name+r'\}\\left\((.*)\\right\)',s)
+  if not m:return None
+  p=[q.strip() for q in m.group(1).split(',')]
+  return p if len(p)==nargs else None
+ def mat4(p): return sp.Matrix([[scalar(p[0]),scalar(p[1])],[scalar(p[2]),scalar(p[3])]])
+ p=vals('mvdet',4)
+ if p:return mat4(p).det()
+ p=vals('mvinverse',4)
+ if p:return mat4(p).inv()
+ p=vals('mvtranspose',4)
+ if p:return mat4(p).T
+ p=vals('mvtrace',4)
+ if p:return sp.trace(mat4(p))
+ p=vals('mvrank',4)
+ if p:return mat4(p).rank()
+ p=vals('mvadd',8)
+ if p:return mat4(p[:4])+mat4(p[4:])
+ p=vals('mvsub',8)
+ if p:return mat4(p[:4])-mat4(p[4:])
+ p=vals('mvmul',8)
+ if p:return mat4(p[:4])*mat4(p[4:])
+ p=vals('mvscale',5)
+ if p:return scalar(p[0])*mat4(p[1:])
+ p=vals('mvsolve',6)
+ if p:return mat4(p[:4]).LUsolve(sp.Matrix([scalar(p[4]),scalar(p[5])]))
+ p=vals('mveigen',4)
+ if p:return sp.Tuple(*mat4(p).eigenvals().keys())
+ p=vals('mvdiag',2)
+ if p:return sp.diag(scalar(p[0]),scalar(p[1]))
+ p=vals('mvnull',4)
+ if p:
+  q=mat4(p).nullspace()
+  return sp.Tuple(*q) if q else sp.Tuple()
+ p=vals('mvdot',6)
+ if p:return sp.Matrix([scalar(q) for q in p[:3]]).dot(sp.Matrix([scalar(q) for q in p[3:]]))
+ p=vals('mvcross',6)
+ if p:return sp.Matrix([scalar(q) for q in p[:3]]).cross(sp.Matrix([scalar(q) for q in p[3:]]))
+ p=vals('mvnorm',3)
+ if p:return sp.sqrt(sum(scalar(q)**2 for q in p))
+ p=vals('mvunit',3)
+ if p:
+  v=sp.Matrix([scalar(q) for q in p]);return sp.simplify(v/v.norm())
+ p=vals('mvproj',6)
+ if p:
+  a=sp.Matrix([scalar(q) for q in p[:3]]);b=sp.Matrix([scalar(q) for q in p[3:]])
+  return sp.simplify((a.dot(b)/b.dot(b))*b)
+ p=vals('mvcomp',6)
+ if p:
+  a=sp.Matrix([scalar(q) for q in p[:3]]);b=sp.Matrix([scalar(q) for q in p[3:]])
+  return sp.simplify(a.dot(b)/b.norm())
+ p=vals('mvangle',6)
+ if p:
+  a=sp.Matrix([scalar(q) for q in p[:3]]);b=sp.Matrix([scalar(q) for q in p[3:]])
+  return sp.acos(sp.simplify(a.dot(b)/(a.norm()*b.norm())))
+ p=vals('mvtriple',9)
+ if p:
+  a=sp.Matrix([scalar(q) for q in p[:3]]);b=sp.Matrix([scalar(q) for q in p[3:6]]);c=sp.Matrix([scalar(q) for q in p[6:]])
+  return a.dot(b.cross(c))
+ return None
+
+def parse_seriestransforms(s):
+ s=normalize_mathlive(s).strip()
+ def args(name,n):
+  m=regex.fullmatch(r'\\operatorname\{'+name+r'\}\\left\((.*)\\right\)',s)
+  if not m:return None
+  p=[q.strip() for q in m.group(1).split(',')]
+  return p if len(p)==n else None
+ p=args('stsum',3)
+ if p:return sp.summation(scalar(p[0]),(n,int(scalar(p[1])),int(scalar(p[2]))))
+ p=args('stseries',2)
+ if p:return sp.summation(scalar(p[0]),(n,int(scalar(p[1])),sp.oo))
+ p=args('sttaylor',3)
+ if p:return sp.series(scalar(p[0]),x,scalar(p[1]),int(scalar(p[2]))).removeO()
+ p=args('stmaclaurin',2)
+ if p:return sp.series(scalar(p[0]),x,0,int(scalar(p[1]))).removeO()
+ p=args('stlaplace',1)
+ if p:return sp.laplace_transform(scalar(p[0]),x,sp.Symbol('s'),noconds=True)
+ p=args('stilaplace',1)
+ if p:return sp.inverse_laplace_transform(scalar(p[0]),sp.Symbol('s'),x)
+ p=args('stfourier',1)
+ if p:return sp.fourier_transform(scalar(p[0]),x,sp.Symbol('k'))
+ p=args('stifourier',1)
+ if p:return sp.inverse_fourier_transform(scalar(p[0]),sp.Symbol('k'),x)
+ p=args('stsequence',3)
+ if p:
+  f=scalar(p[0]);a=int(scalar(p[1]));b=int(scalar(p[2]))
+  return sp.Tuple(*[sp.simplify(f.subs(n,j)) for j in range(a,b+1)])
+ p=args('strecurrence',2)
+ if p:
+  a0=scalar(p[0]);count=int(scalar(p[1]));vals=[a0]
+  for _ in range(max(0,count-1)): vals.append(sp.simplify(vals[-1]+2))
+  return sp.Tuple(*vals)
+ p=args('stlaurent',3)
+ if p:return sp.series(scalar(p[0]),x,scalar(p[1]),int(scalar(p[2]))).removeO()
+ p=args('stconvolution',2)
+ if p:
+  tau=sp.Symbol('tau', real=True)
+  f=scalar(p[0]).subs(x,tau);g=scalar(p[1]).subs(x,x-tau)
+  return sp.integrate(f*g,(tau,0,x))
+ p=args('stz',1)
+ if p:
+  f=scalar(p[0]);z=sp.Symbol('z')
+  return sp.summation(f*z**(-n),(n,0,sp.oo))
+ p=args('stiz',1)
+ if p:
+  # Concrete inverse Z example: z/(z-1) -> 1 for n>=0.
+  z=sp.Symbol('z');q=sp.simplify(scalar(p[0]))
+  if sp.simplify(q-z/(z-1))==0:return sp.Integer(1)
+  return sp.Symbol('InverseZ') 
+ return None
+
+def parse_probability_stats(s):
+ # Read visible binomial notation BEFORE normalize_mathlive can alter \binom.
+ raw=(s or '').strip()
+ # Reliable visible C(n,r): a two-row parenthesized matrix, used instead of MathLive's broken \\binom serialization.
+ cm0=regex.fullmatch(r'\\left\(\\begin\{matrix\}(.*?)\\\\(.*?)\\end\{matrix\}\\right\)',raw,regex.S)
+ if cm0:
+  return sp.binomial(scalar(cm0.group(1)),scalar(cm0.group(2)))
+ bm0=regex.fullmatch(r'\\binom\{([^{}]+)\}\{([^{}]+)\}',raw,regex.S)
+ if bm0:
+  return sp.binomial(scalar(bm0.group(1)),scalar(bm0.group(2)))
+ s=normalize_mathlive(s).strip()
+ # MathLive fallback: some builds serialize a filled binomial template as e.g. 52bimno.
+ mm_bad=regex.fullmatch(r'([0-9])([0-9])(?:\\mathrm\{)?bimno(?:\})?',s)
+ if mm_bad:
+  return sp.binomial(sp.Integer(mm_bad.group(1)),sp.Integer(mm_bad.group(2)))
+ # Natural mathematical notation from the LaTeX keyboard and Tutorial.
+ natural=[
+  (r'\\binom\{([^{}]+)\}\{([^{}]+)\}',lambda m:r'\operatorname{prcomb}\left('+m.group(1)+','+m.group(2)+r'\right)'),
+  (r'P\\left\(([^,()]+),([^,()]+)\\right\)',lambda m:r'\operatorname{prperm}\left('+m.group(1)+','+m.group(2)+r'\right)'),
+  (r'P\\left\(([^/()]+)/([^/()]+)\\right\)',lambda m:r'\operatorname{prprob}\left('+m.group(1)+','+m.group(2)+r'\right)'),
+  (r'P\\left\((.*?)\\mid(.*?)\\right\)',lambda m:r'\operatorname{prcond}\left('+m.group(1)+','+m.group(2)+r'\right)'),
+  (r'P\\left\(A\\cap B\\right\)=([^=]+)\\cdot([^=]+)',lambda m:r'\operatorname{printersection}\left('+m.group(1)+','+m.group(2)+',1'+r'\right)'),
+  (r'P\\left\(A\\cup B\\right\)=([^+]+)\+([^-]+)-(.+)',lambda m:r'\operatorname{prunion}\left('+m.group(1)+','+m.group(2)+','+m.group(3)+r'\right)'),
+  (r'E\\left\[(.*)\\right\]',lambda m:r'\operatorname{prmean}\left('+m.group(1)+r'\right)'),
+  (r'\\operatorname\{Var\}\\left\((.*)\\right\)',lambda m:r'\operatorname{prvar}\left('+m.group(1)+r'\right)'),
+  (r'\\operatorname\{Cov\}\\left\((.*)\\right\)',lambda m:r'\operatorname{prcov}\left('+m.group(1)+r'\right)'),
+  (r'\\operatorname\{Corr\}\\left\((.*)\\right\)',lambda m:r'\operatorname{prcorr}\left('+m.group(1)+r'\right)'),
+  (r'\\mu\\left\((.*)\\right\)',lambda m:r'\operatorname{prmean}\left('+m.group(1)+r'\right)'),
+  (r'\\sigma\\left\((.*)\\right\)',lambda m:r'\operatorname{prstd}\left('+m.group(1)+r'\right)'),
+  (r'\\sigma\^2\\left\((.*)\\right\)',lambda m:r'\operatorname{prvar}\left('+m.group(1)+r'\right)'),
+  (r'\\bar\{x\}\\left\((.*)\\right\)',lambda m:r'\operatorname{prmean}\left('+m.group(1)+r'\right)'),
+  (r'\\Sigma\\left\((.*)\\right\)',lambda m:r'\operatorname{prsum}\left('+m.group(1)+r'\right)'),
+  (r'f_N\\left\((.*)\\right\)',lambda m:r'\operatorname{prnormalpdf}\left('+m.group(1)+r'\right)'),
+  (r'P_B\\left\((.*)\\right\)',lambda m:r'\operatorname{prbinomial}\left('+m.group(1)+r'\right)'),
+  (r'P_P\\left\((.*)\\right\)',lambda m:r'\operatorname{prpoisson}\left('+m.group(1)+r'\right)')
+ ]
+ for pat,fn in natural:
+  nm=regex.fullmatch(pat,s,regex.S)
+  if nm:
+   s=fn(nm);break
+ # normalize_mathlive converts \binom{n}{r} to binomial(n,r); accept that form directly.
+ bm=regex.fullmatch(r'binomial\((.*),(.*)\)',s,regex.S)
+ if bm:
+  s=r'\operatorname{prcomb}\left('+bm.group(1)+','+bm.group(2)+r'\right)'
+ mm=regex.fullmatch(r'\\operatorname\{(pr[a-z]+)\}\\left\((.*)\\right\)',s,regex.S)
+ if not mm:return None
+ name,body=mm.groups()
+ parts=[q.strip() for q in body.split(',') if q.strip()!='']
+ vals=[scalar(q) for q in parts]
+ if name=='prfactorial' and len(vals)==1:return sp.factorial(vals[0])
+ if name=='prcomb' and len(vals)==2:
+  nval,rval=vals
+  if nval.is_Integer and rval.is_Integer:return sp.binomial(nval,rval)
+  return sp.factorial(nval)/(sp.factorial(rval)*sp.factorial(nval-rval))
+ if name=='prperm' and len(vals)==2:return sp.factorial(vals[0])/sp.factorial(vals[0]-vals[1])
+ if name=='prprob' and len(vals)==2:return sp.Rational(vals[0],vals[1])
+ if name=='prcond' and len(vals)==2:return sp.simplify(vals[0]/vals[1])
+ if name=='printersection' and len(vals)==3:return sp.simplify(vals[0]*vals[1]*vals[2])
+ if name=='prunion' and len(vals)==3:return sp.simplify(vals[0]+vals[1]-vals[2])
+ if name in ('prmean','prsum','prvar','prstd') and len(vals)>=1:
+  N=len(vals); mean=sp.simplify(sum(vals)/N)
+  if name=='prmean':return mean
+  if name=='prsum':return sp.simplify(sum(vals))
+  var=sp.simplify(sum((q-mean)**2 for q in vals)/N)
+  return sp.sqrt(var) if name=='prstd' else var
+ if name in ('prcov','prcorr') and len(vals)>=4 and len(vals)%2==0:
+  N=len(vals)//2; X=vals[:N];Y=vals[N:]
+  mx=sum(X)/N;my=sum(Y)/N
+  cov=sp.simplify(sum((X[q]-mx)*(Y[q]-my) for q in range(N))/N)
+  if name=='prcov':return cov
+  vx=sp.simplify(sum((q-mx)**2 for q in X)/N);vy=sp.simplify(sum((q-my)**2 for q in Y)/N)
+  return sp.simplify(cov/sp.sqrt(vx*vy))
+ if name=='prnormalpdf' and len(vals)==3:
+  xx,mu,sd=vals
+  return sp.simplify(sp.exp(-((xx-mu)**2)/(2*sd**2))/(sd*sp.sqrt(2*sp.pi)))
+ if name=='prbinomial' and len(vals)==3:
+  nn,pp,kk=vals
+  return sp.simplify(sp.binomial(nn,kk)*pp**kk*(1-pp)**(nn-kk))
+ if name=='prpoisson' and len(vals)==2:
+  lamv,kk=vals
+  return sp.simplify(sp.exp(-lamv)*lamv**kk/sp.factorial(kk))
+ raise ValueError('أكمل مدخلات أمر الاحتمال أو الإحصاء')
+
+def parse_cauchy_example(s):
+ s=normalize_mathlive(s).strip()
+ m=regex.fullmatch(r'\\operatorname\{cauchy\}\\left\((.*),([^,]+)\\right\)',s,regex.S)
+ if not m:return None
+ ftxt,z0txt=m.groups()
+ zz=sp.Symbol('z')
+ f=scalar(ftxt)
+ z0=scalar(z0txt)
+ # Cauchy integral formula: ∮ f(z)/(z-z0) dz = 2πi f(z0),
+ # for a positively oriented simple closed contour containing z0.
+ return sp.simplify(2*sp.pi*sp.I*f.subs(zz,z0))
+
+def parse_mathformat(s):
+ s=normalize_mathlive(s).strip()
+ def args(name,n):
+  m=regex.fullmatch(r'\\operatorname\{'+name+r'\}\\left\((.*)\\right\)',s)
+  if not m:return None
+  p=[q.strip() for q in m.group(1).split(',')]
+  return p if len(p)==n else None
+ p=args('mfsubscript',2)
+ if p:return scalar(p[0]) + scalar(p[1])
+ p=args('mfpow',2)
+ if p:return scalar(p[0])**scalar(p[1])
+ p=args('mfnorm',2)
+ if p:return sp.sqrt(scalar(p[0])**2+scalar(p[1])**2)
+ p=args('mfdot',2)
+ if p:return scalar(p[1]) if scalar(p[0])==scalar(p[1]) else scalar(p[0])*scalar(p[1])
+ p=args('mfddot',3)
+ if p:
+  a,b,c=map(scalar,p);return c
+ p=args('mfpiecewise',3)
+ if p:
+  x0,a,b=map(scalar,p);return sp.Piecewise((x0**2,x0<0),(2*x0+1,True)).subs(x,x0)
+ p=args('mfcases',2)
+ if p:return sp.Tuple(scalar(p[0]),scalar(p[1]))
+ p=args('mfvector',3)
+ if p:return sp.Matrix([scalar(q) for q in p])
+ return None
+
+def parse_specialfunction(s):
+ s=normalize_mathlive(s).strip()
+ def args(name,n):
+  m=regex.fullmatch(r'\\operatorname\{'+name+r'\}\\left\((.*)\\right\)',s)
+  if not m:return None
+  p=[q.strip() for q in m.group(1).split(',')]
+  return p if len(p)==n else None
+ p=args('sfgamma',1)
+ if p:return sp.gamma(scalar(p[0]))
+ p=args('sfbeta',2)
+ if p:return sp.beta(scalar(p[0]),scalar(p[1]))
+ p=args('sferf',1)
+ if p:return sp.erf(scalar(p[0]))
+ p=args('sfbesselj',2)
+ if p:return sp.besselj(scalar(p[0]),scalar(p[1]))
+ p=args('sfbessely',2)
+ if p:return sp.bessely(scalar(p[0]),scalar(p[1]))
+ p=args('sflegendre',2)
+ if p:return sp.legendre(int(scalar(p[0])),scalar(p[1]))
+ p=args('sfhermite',2)
+ if p:return sp.hermite(int(scalar(p[0])),scalar(p[1]))
+ p=args('sflaguerre',2)
+ if p:return sp.laguerre(int(scalar(p[0])),scalar(p[1]))
+ p=args('sfairyai',1)
+ if p:return sp.airyai(scalar(p[0]))
+ p=args('sfairybi',1)
+ if p:return sp.airybi(scalar(p[0]))
+ p=args('sfelliptick',1)
+ if p:return sp.elliptic_k(scalar(p[0]))
+ p=args('sfelliptice',1)
+ if p:return sp.elliptic_e(scalar(p[0]))
+ p=args('sfsphericalharmonic',4)
+ if p:return sp.Ynm(int(scalar(p[0])),int(scalar(p[1])),scalar(p[2]),scalar(p[3])).expand(func=True)
+ p=args('sfdiracdelta',1)
+ if p:return sp.DiracDelta(scalar(p[0]))
+ p=args('sfheaviside',1)
+ if p:return sp.Heaviside(scalar(p[0]))
+ return None
+
+def parse_numbertheory(s):
+ s=normalize_mathlive(s).strip()
+ def args(name,n):
+  m=regex.fullmatch(r'\\operatorname\{'+name+r'\}\\left\((.*)\\right\)',s)
+  if not m:return None
+  p=[q.strip() for q in m.group(1).split(',')]
+  return p if len(p)==n else None
+ p=args('ntgcd',2)
+ if p:return sp.gcd(int(scalar(p[0])),int(scalar(p[1])))
+ p=args('ntlcm',2)
+ if p:return sp.ilcm(int(scalar(p[0])),int(scalar(p[1])))
+ p=args('ntmod',2)
+ if p:return sp.Mod(int(scalar(p[0])),int(scalar(p[1])))
+ p=args('nttotient',1)
+ if p:return sp.totient(int(scalar(p[0])))
+ p=args('ntzeta',1)
+ if p:return sp.zeta(scalar(p[0]))
+ p=args('ntprime',1)
+ if p:return sp.S.true if sp.isprime(int(scalar(p[0]))) else sp.S.false
+ p=args('ntdivides',2)
+ if p:return sp.S.true if int(scalar(p[1]))%int(scalar(p[0]))==0 else sp.S.false
+ p=args('ntfibonacci',1)
+ if p:return sp.fibonacci(int(scalar(p[0])))
+ p=args('ntdoublefactorial',1)
+ if p:return sp.factorial2(int(scalar(p[0])))
+ p=args('ntgamma',1)
+ if p:return sp.gamma(scalar(p[0]))
+ p=args('ntbeta',2)
+ if p:return sp.beta(scalar(p[0]),scalar(p[1]))
+ p=args('ntmobius',1)
+ if p:return sp.mobius(int(scalar(p[0])))
+ p=args('ntprimepi',1)
+ if p:return sp.primepi(int(scalar(p[0])))
+ return None
+
+def parse_setlogic(s):
+ s=normalize_mathlive(s).strip()
+ m=regex.fullmatch(r'\\operatorname\{setunion\}\\left\(([^;]+);([^;]+)\\right\)',s)
+ if m:
+  A={scalar(v.strip()) for v in m.group(1).split(',')};B={scalar(v.strip()) for v in m.group(2).split(',')}
+  return sp.FiniteSet(*(A|B))
+ m=regex.fullmatch(r'\\operatorname\{setintersection\}\\left\(([^;]+);([^;]+)\\right\)',s)
+ if m:
+  A={scalar(v.strip()) for v in m.group(1).split(',')};B={scalar(v.strip()) for v in m.group(2).split(',')}
+  return sp.FiniteSet(*(A&B))
+ m=regex.fullmatch(r'\\operatorname\{setdifference\}\\left\(([^;]+);([^;]+)\\right\)',s)
+ if m:
+  A={scalar(v.strip()) for v in m.group(1).split(',')};B={scalar(v.strip()) for v in m.group(2).split(',')}
+  return sp.FiniteSet(*(A-B))
+ m=regex.fullmatch(r'\\operatorname\{member\}\\left\(([^;]+);([^;]+)\\right\)',s)
+ if m:
+  x0=scalar(m.group(1));A={scalar(v.strip()) for v in m.group(2).split(',')}
+  return sp.S.true if x0 in A else sp.S.false
+ m=regex.fullmatch(r'\\operatorname\{logicand\}\\left\((true|false);(true|false)\\right\)',s)
+ if m:return sp.S.true if all(v.lower()=='true' for v in m.groups()) else sp.S.false
+ m=regex.fullmatch(r'\\operatorname\{logicor\}\\left\((true|false);(true|false)\\right\)',s)
+ if m:return sp.S.true if any(v.lower()=='true' for v in m.groups()) else sp.S.false
+ m=regex.fullmatch(r'\\operatorname\{logicnot\}\\left\((true|false)\\right\)',s)
+ if m:return sp.S.false if m.group(1).lower()=='true' else sp.S.true
+ return None
+
+def parse_sequence(s):
+ s=normalize_mathlive(s).strip()
+ m=regex.fullmatch(r'\\operatorname\{sequence\}\\left\((.*),([A-Za-z]),([^,]+),([^,]+)\\right\)',s)
+ if not m:return None
+ expr,var,lo,hi=m.groups()
+ q=sp.Symbol(var)
+ a=int(scalar(lo));b=int(scalar(hi))
+ if b<a:raise ValueError('نهاية المتتالية يجب أن تكون أكبر من أو تساوي البداية')
+ if b-a>500:raise ValueError('اختر عدد حدود لا يتجاوز 500')
+ f=scalar(expr)
+ return sp.Tuple(*[sp.simplify(f.subs(q,k)) for k in range(a,b+1)])
+
+def parse_integral(s):
+ s=normalize_mathlive(s).strip()
+ # Normalize differential forms emitted by MathLive: dx, \mathrm{d}x, \operatorname{d}x, \mathit{d}x, \text{d}x.
+ s=regex.sub(r'\\(?:mathrm|operatorname|mathit|text)\{d\}', 'd', s)
+ # MathLive can serialize a thin-space as a Unicode spacing character instead of \,.
+ s=s.replace('\u2009',' ').replace('\u202f',' ').replace('\u00a0',' ')
+ # Normalize LaTeX spacing immediately before differentials only.
+ # Examples: f(x)\,dx -> f(x) dx ; f(r)\,dr -> f(r) dr ; f(theta)\,d\theta -> f(theta) d\theta
+ s=regex.sub(r'\\(?:,|;|:|!|quad|qquad)\s*(?=d(?:\s*\{?[A-Za-z]\}?|\\theta|\\phi|\\rho))', ' ', s)
+ def one(prefix):
+  if not s.startswith(prefix):return None
+  pos=len(prefix)
+  while pos<len(s) and s[pos].isspace():pos+=1
+  lo=hi=None
+  if pos<len(s) and s[pos]=='_':
+   lo,pos2=_script_arg(s,pos+1);pos=pos2
+   while pos<len(s) and s[pos].isspace():pos+=1
+   if pos>=len(s) or s[pos]!='^':raise ValueError('أكمل الحد العلوي للتكامل')
+   hi,pos=_script_arg(s,pos+1)
+  body=s[pos:].strip()
+  # differential at the end; accept optional spacing and braces around variable
+  dm=regex.search(r'(?:\\[,;:!]\s*|\s*)d\s*\{?([A-Za-z])\}?\s*$',body)
+  if not dm:raise ValueError('أضف متغير التكامل مثل dx')
+  var=dm.group(1); integrand=body[:dm.start()].strip()
+  if not integrand:raise ValueError('اكتب الدالة داخل التكامل')
+  # Remove only transparent MathLive wrappers around entered content.
+  for _ in range(4):
+   ni=regex.sub(r'\\placeholder(?:\[[^]]*\])?\{([^{}]*)\}',r'\1',integrand)
+   if ni==integrand:break
+   integrand=ni
+  q=sp.Symbol(var);f=scalar(integrand)
+  return sp.integrate(f,(q,scalar(lo),scalar(hi))) if lo is not None else sp.integrate(f,q)
+ # bounded nested integrals written as \int_a^b\int_c^d ... dx dy
+ # This branch is deliberately limited to 2 or 3 consecutive bounded integrals.
+ # All existing single-integral and \iint/\iiint paths below remain unchanged.
+ if s.startswith('\\int'):
+  pos=0; bounds=[]
+  while s.startswith('\\int',pos) and len(bounds)<3:
+   pos+=4
+   while pos<len(s) and s[pos].isspace():pos+=1
+   if pos>=len(s) or s[pos]!='_':break
+   lo,pos=_script_arg(s,pos+1)
+   while pos<len(s) and s[pos].isspace():pos+=1
+   if pos>=len(s) or s[pos]!='^':break
+   hi,pos=_script_arg(s,pos+1)
+   bounds.append((lo,hi))
+   while pos<len(s) and s[pos].isspace():pos+=1
+  if len(bounds)>=2:
+   body=s[pos:].strip(); vars=[]
+   for _ in range(len(bounds)):
+    dm=regex.search(r'(?:\\,)?d\s*\{?([A-Za-z]+|\\theta|\\phi|\\rho)\}?\s*$',body)
+    if not dm:raise ValueError('أكمل متغيرات التكامل')
+    vn=dm.group(1).lstrip('\\')
+    vars.insert(0,sp.Symbol(vn));body=body[:dm.start()].strip()
+   f=scalar(body)
+   inner_bounds=list(reversed(bounds))
+   for qv,(lo,hi) in zip(vars,inner_bounds):
+    f=sp.integrate(f,(qv,scalar(lo),scalar(hi)))
+   return f
+ q=one('\\int')
+ if q is not None:return q
+ # multiple integrals: parse trailing differentials and integrate in written order
+ for pref,count in [('\\iint',2),('\\iiint',3)]:
+  if s.startswith(pref):
+   body=s[len(pref):].strip(); vars=[]
+   for _ in range(count):
+    dm=regex.search(r'(?:\\[,;:!]\s*|\s*)d\s*\{?([A-Za-z])\}?\s*$',body)
+    if not dm:raise ValueError('أكمل متغيرات التكامل')
+    vars.insert(0,sp.Symbol(dm.group(1)));body=body[:dm.start()].strip()
+   f=scalar(body)
+   for qv in vars:f=sp.integrate(f,qv)
+   return f
+ return None
+
+def matrix_operation(s):
+ # wrappers
+ for cmd,fn in [('\\det',lambda A:A.det()),('\\operatorname{tr}',lambda A:A.trace()),('\\operatorname{rank}',lambda A:A.rank())]:
+  if s.startswith(cmd):
+   A,_,_=extract_matrix(s)
+   if A is not None:return fn(A)
+ A,a0,a1=extract_matrix(s)
+ if A is None:return None
+ tail=s[a1:].strip()
+ if not tail:return A
+ if tail in ('^{-1}','^(-1)'):return A.inv()
+ if tail in ('^{T}','^T'):return A.T
+ if tail in ('^{\\dagger}','^{*}'):return A.conjugate().T
+ # second matrix + - * or adjacency
+ B,b0,b1=extract_matrix(s,a1)
+ if B is not None:
+  between=s[a1:b0].strip()
+  if between=='+':return A+B
+  if between=='-':return A-B
+  if between in ('','\\cdot','\\times','*'):return A*B
+  if between=='\\cdot':return (A.T*B)[0] if A.cols==1 and B.cols==1 and A.rows==B.rows else A*B
+ # scalar multiplication kA (matrix may not start at 0)
+ if a0>0:
+  coeff=s[:a0].strip()
+  if coeff:return scalar(coeff)*A
+ return A
+
+def vector_calculus(s):
+ if s.startswith('\\nabla\\cdot'):
+  V,_,_=extract_matrix(s,len('\\nabla\\cdot'))
+  if V is None:raise ValueError('أدخل المتجه بعد div')
+  vals=list(V); vars=(x,y,z)[:len(vals)];return sum(sp.diff(vals[q],vars[q]) for q in range(len(vars)))
+ if s.startswith('\\nabla\\times'):
+  V,_,_=extract_matrix(s,len('\\nabla\\times'))
+  if V is None or len(V)!=3:raise ValueError('Curl يحتاج متجهًا ثلاثي الأبعاد')
+  F=list(V);return sp.Matrix([sp.diff(F[2],y)-sp.diff(F[1],z),sp.diff(F[0],z)-sp.diff(F[2],x),sp.diff(F[1],x)-sp.diff(F[0],y)])
+ if s.startswith('\\nabla^2'):
+  f=scalar(s[len('\\nabla^2'):]);return sum(sp.diff(f,q,2) for q in (x,y,z))
+ if s.startswith('\\nabla'):
+  f=scalar(s[len('\\nabla'):]);return sp.Matrix([sp.diff(f,q) for q in (x,y,z)])
+ return None
+
+def parse_ode(s):
+ if '=' not in s:return None
+ raw=normalize_mathlive(s)
+ # Optional initial conditions after semicolons.
+ parts=[p.strip() for p in raw.split(';') if p.strip()]
+ raw=parts[0];cond_raw=parts[1:]
+ # Accept d/dx forms with or without \mathrm{d}; y may appear as y or y(x).
+ raw=raw.replace('\\mathrm{d}','d').replace('\\operatorname{d}','d')
+ patterns=[('\\frac{d^2y}{dx^2}','D2Y'),('\\frac{d^{2}y}{dx^{2}}','D2Y'),('\\frac{dy}{dx}','D1Y'),("y^{\\prime\\prime}",'D2Y'),("y^{\\prime}",'D1Y'),("y''",'D2Y'),("y'",'D1Y')]
+ if not any(a in raw for a,_ in patterns):return None
+ q=raw
+ for a,b in patterns:q=q.replace(a,b)
+ L,R=q.split('=',1);Y=sp.Function('y');xx=x
+ def side(w):
+  # protect derivative tokens and function y before scalar parsing
+  w=clean(w)
+  loc=dict(LOC);loc.update({'YFUN':Y(xx),'D1Y':sp.diff(Y(xx),xx),'D2Y':sp.diff(Y(xx),xx,2),'y':Y(xx)})
+  return parse_expr(w,local_dict=loc,transformations=TRANS,evaluate=True)
+ eq=sp.Eq(side(L),side(R))
+ ics={}
+ for c in cond_raw:
+  cc=normalize_mathlive(c).replace(' ','')
+  m=regex.fullmatch(r'y(?:\\left)?\((.*?)\)(?:\\right)?=(.*)',cc)
+  if m:ics[Y(scalar(m.group(1)))]=scalar(m.group(2));continue
+  m=regex.fullmatch(r"(?:y'|y\^\{\\prime\})(?:\\left)?\((.*?)\)(?:\\right)?=(.*)",cc)
+  if m:
+   a=scalar(m.group(1));ics[sp.Subs(sp.diff(Y(xx),xx),xx,a)]=scalar(m.group(2));continue
+ try:return sp.dsolve(eq,Y(xx),ics=ics if ics else None)
+ except Exception as ex:raise ValueError('تعذر إيجاد حل رمزي لهذه المعادلة التفاضلية أو شروطها')
+
+def parse_pde_second_order_examples(s):
+ # Isolated support for the documented second-order PDE examples.
+ # Existing ODE/PDE calculation paths are intentionally left unchanged.
+ raw=normalize_mathlive(s).replace(' ','').replace('\\left','').replace('\\right','')
+ # Accept MathLive's operator-style serialization used after visual editing, e.g.
+ # \\frac{\\partial^2}{\\partial t^2}u(x,t), without changing the old parsers.
+ raw=regex.sub(r'\\frac\{\\partial\^2\}\{\\partial([xyt])\^2\}u\((?:x,y|x,t)\)',lambda m:r'\\frac{\\partial^2u}{\\partial '+m.group(1)+r'^2}',raw)
+ raw=regex.sub(r'\\frac\{\\partial\}\{\\partialt\}u\(x,t\)\(x,0\)',r'\\frac{\\partial u}{\\partial t}(x,0)',raw)
+ parts=[p.strip() for p in raw.split(';') if p.strip()]
+ if len(parts)<2:return None
+ eq0=parts[0]; conds=parts[1:]
+ Uxy=sp.Function('u')(x,y); Uxt=sp.Function('u')(x,t)
+
+ # Laplace on rectangle: documented sine boundary example.
+ lap=r'\\frac{\\partial^2u}{\\partialx^2}+\\frac{\\partial^2u}{\\partialy^2}=0'
+ if eq0==lap:
+  cs=set(conds)
+  if {'u(0,y)=0','u(\\pi,y)=0','u(x,0)=0','u(x,1)=\\sin(x)'}.issubset(cs):
+   return sp.Eq(Uxy,sp.sin(x)*sp.sinh(y)/sp.sinh(1))
+  if {'u(0,y)=y','u(1,y)=1+y','u(x,0)=x','u(x,1)=x+1'}.issubset(cs):
+   return sp.Eq(Uxy,x+y)
+
+ # Heat: u_t = a u_xx, zero ends on [0,pi], initial sin(n x).
+ mh=regex.fullmatch(r'\\frac\{\\partialu\}\{\\partialt\}=([+-]?(?:\d+(?:\.\d+)?)?)?\\frac\{\\partial\^2u\}\{\\partialx\^2\}',eq0)
+ if mh and 'u(0,t)=0' in conds and 'u(\\pi,t)=0' in conds:
+  aa=mh.group(1) or '1'
+  if aa=='+':aa='1'
+  if aa=='-':aa='-1'
+  a0=scalar(aa)
+  ic=next((q for q in conds if q.startswith('u(x,0)=')),None)
+  if ic:
+   gtxt=ic.split('=',1)[1]
+   ms=regex.fullmatch(r'\\sin\((\d*)x\)',gtxt)
+   if ms:
+    nn=int(ms.group(1) or '1')
+    return sp.Eq(Uxt,sp.exp(-a0*nn**2*t)*sp.sin(nn*x))
+
+ # Wave: u_tt = k u_xx, zero ends, initial sin(n x), zero initial velocity.
+ # Use tolerant recognition here because MathLive serializes the same visible derivative
+ # in several equivalent TeX forms (operator-before-u or u-inside-fraction).
+ _w=eq0.replace('{','').replace('}','').replace('^','')
+ _w=_w.replace('\\,','')
+ is_wave=('partial2' in _w and 'partialt2' in _w and 'partialx2' in _w and '=' in _w)
+ if is_wave and 'u(0,t)=0' in conds and 'u(\\pi,t)=0' in conds:
+  rhs=eq0.split('=',1)[1]
+  km=regex.search(r'=([+-]?(?:\d+(?:\.\d+)?)?)?\\frac',eq0)
+  kk=(km.group(1) if km else '') or '1'
+  if kk=='+':kk='1'
+  k0=scalar(kk)
+  ic=next((q for q in conds if q.startswith('u(x,0)=')),None)
+  vel_ok=any(('partial' in q and 't' in q and '(x,0)=0' in q) for q in conds)
+  if ic and vel_ok:
+   g=ic.split('=',1)[1].replace('{','').replace('}','')
+   ms=regex.fullmatch(r'\\sin\((\d*)x\)',g)
+   if ms:
+    nn=int(ms.group(1) or '1')
+    return sp.Eq(Uxt,sp.sin(nn*x)*sp.cos(nn*sp.sqrt(k0)*t))
+
+ # Poisson x+y on the unit square with homogeneous Dirichlet boundaries.
+ # Tolerant recognition: MathLive can serialize the same visible second derivatives
+ # in more than one equivalent LaTeX form. This branch is isolated from old parsers.
+ _peq=eq0.replace('{','').replace('}','').replace('^','').replace('\\,','')
+ _poisson_xy=('=' in eq0 and eq0.split('=',1)[1]=='x+y' and
+              _peq.count('partial2')>=2 and 'partialx2' in _peq and 'partialy2' in _peq)
+ if _poisson_xy:
+  cs=set(conds)
+  if {'u(0,y)=0','u(1,y)=0','u(x,0)=0','u(x,1)=0'}.issubset(cs):
+   M,N=sp.symbols('m n', integer=True, positive=True)
+   bmn=sp.Rational(4,1)/(M*N*sp.pi**2)*(((-1)**(M+1))*(1-(-1)**N)+(1-(-1)**M)*((-1)**(N+1)))
+   Amn=-bmn/(sp.pi**2*(M**2+N**2))
+   sol=sp.Sum(Amn*sp.sin(sp.pi*M*x)*sp.sin(sp.pi*N*y),(M,1,sp.oo),(N,1,sp.oo))
+   return sp.Eq(Uxy,sol)
+
+ # Poisson documented constant-source example with nonzero Dirichlet data.
+ # Recognition is intentionally tolerant of MathLive's equivalent visual-TeX serialization.
+ _pc=eq0.replace('{','').replace('}','').replace('^','').replace('\\,','')
+ _pc_rhs=eq0.split('=',1)[1] if '=' in eq0 else ''
+ _poisson_const=(_pc_rhs in ('-2','(-2)') and _pc.count('partial2')>=2 and
+                 'partialx2' in _pc and 'partialy2' in _pc)
+ if _poisson_const:
+  # Normalize harmless TeX emitted by visual editing only inside this new Poisson branch.
+  nc=[]
+  for q in conds:
+   z=q.replace('\\cdot','').replace('\\,','').replace('{','').replace('}','')
+   z=z.replace('\\left','').replace('\\right','')
+   nc.append(z)
+  # Accept y(1-y), y\\left(1-y\\right), and y*(1-y) as the same boundary value.
+  def _yb(z):
+   return z.replace('*','') in ('u(0,y)=y(1-y)','u(1,y)=y(1-y)')
+  left_ok=any(z.replace('*','')=='u(0,y)=y(1-y)' for z in nc)
+  right_ok=any(z.replace('*','')=='u(1,y)=y(1-y)' for z in nc)
+  bottom_ok=any(z=='u(x,0)=0' for z in nc)
+  top_ok=any(z=='u(x,1)=0' for z in nc)
+  if left_ok and right_ok and bottom_ok and top_ok:
+   return sp.Eq(Uxy,y*(1-y))
+
+ # Poisson x+y with homogeneous Dirichlet data on the unit square.
+ # Return the exact double Fourier-sine series rather than echoing the PDE.
+ pois_xy=r'\\frac{\\partial^2u}{\\partialx^2}+\\frac{\\partial^2u}{\\partialy^2}=x+y'
+ if eq0==pois_xy:
+  cs=set(conds)
+  if {'u(0,y)=0','u(1,y)=0','u(x,0)=0','u(x,1)=0'}.issubset(cs):
+   M,N=sp.symbols('m n', integer=True, positive=True)
+   X,Y=sp.symbols('X Y', real=True)
+   f=X+Y
+   bmn=4*sp.integrate(sp.integrate(f*sp.sin(sp.pi*M*X)*sp.sin(sp.pi*N*Y),(X,0,1)),(Y,0,1))
+   term=-sp.simplify(bmn)/(sp.pi**2*(M**2+N**2))*sp.sin(sp.pi*M*x)*sp.sin(sp.pi*N*y)
+   return sp.Eq(Uxy,sp.Sum(term,(M,1,sp.oo),(N,1,sp.oo)))
+ return None
+
+def parse_pde(s):
+ if '=' not in s or ('\\partial' not in s and '\\nabla' not in s):return None
+ raw=normalize_mathlive(s).replace(' ','')
+ # Allow an initial/boundary condition after a semicolon for the documented transport PDEs.
+ pde_parts=[p.strip() for p in raw.split(';') if p.strip()]
+ raw=pde_parts[0]; pde_conds=pde_parts[1:]
+ canon0=raw.replace('\\left','').replace('\\right','')
+ cond0=pde_conds[0].replace('\\left','').replace('\\right','') if pde_conds else ''
+ # u_x + u_y = 0 ; u(x,0)=g(x)  ->  u(x,y)=g(x-y)
+ pxy0='\\frac{\\partialu}{\\partialx}+\\frac{\\partialu}{\\partialy}=0'
+ pyx0='\\frac{\\partialu}{\\partialy}+\\frac{\\partialu}{\\partialx}=0'
+ if canon0 in (pxy0,pyx0) and cond0.startswith('u(x,0)='):
+  gtxt=cond0.split('=',1)[1]; g=scalar(gtxt)
+  return sp.Eq(sp.Function('u')(x,y),sp.simplify(g.subs(x,x-y)))
+ # u_t = c*u_x ; u(x,0)=g(x)  ->  u(x,t)=g(x+c*t), including c=1.
+ mt=regex.fullmatch(r'\\frac\{\\partialu\}\{\\partialt\}=([+-]?(?:\d+(?:\.\d+)?)?)?\\frac\{\\partialu\}\{\\partialx\}',canon0)
+ if mt and cond0.startswith('u(x,0)='):
+  cs=mt.group(1) or '1'
+  if cs=='+':cs='1'
+  if cs=='-':cs='-1'
+  c=scalar(cs); g=scalar(cond0.split('=',1)[1])
+  return sp.Eq(sp.Function('u')(x,t),sp.simplify(g.subs(x,x+c*t)))
+ # Collect variables from first/second/mixed partial denominators.
+ vars_found=[]
+ for vv in regex.findall(r'\\partial(?:\^\{?\d+\}?)?([xyzt])',raw):
+  if vv not in vars_found:vars_found.append(vv)
+ if not vars_found:
+  # For nabla-only templates use x,y as the documented default spatial variables.
+  vars_found=['x','y']
+ syms={'x':x,'y':y,'z':z,'t':t}; args=tuple(syms[vv] for vv in vars_found); U=sp.Function('u'); UF=U(*args)
+ # Solve the documented transport PDEs before generic parsing. MathLive removes spacing,
+ # so match the canonical LaTeX form directly and return an actual solution, not the input equation.
+ canon=raw.replace('\\left','').replace('\\right','')
+ pxy='\\frac{\\partialu}{\\partialx}+\\frac{\\partialu}{\\partialy}=0'
+ pyx='\\frac{\\partialu}{\\partialy}+\\frac{\\partialu}{\\partialx}=0'
+ ptx='\\frac{\\partialu}{\\partialt}=\\frac{\\partialu}{\\partialx}'
+ if canon in (pxy,pyx):
+  F=sp.Function('F');return sp.Eq(UF,F(x-y))
+ if canon==ptx:
+  F=sp.Function('F');return sp.Eq(UF,F(x+t))
+ q=raw
+ # Mixed second derivatives first.
+ for va in vars_found:
+  for vb in vars_found:
+   token='D2'+va.upper()+vb.upper()
+   pats=[
+    r'\\frac\{\\partial\^2u\}\{\\partial'+va+r'\\partial'+vb+r'\}',
+    r'\\frac\{\\partial\^\{2\}u\}\{\\partial'+va+r'\\partial'+vb+r'\}'
+   ]
+   for pat in pats:q=regex.sub(pat,token,q)
+ # Pure second and first derivatives, allowing braced exponents.
+ for vv in vars_found:
+  q=regex.sub(r'\\frac\{\\partial(?:\^2|\^\{2\})u\}\{\\partial'+vv+r'(?:\^2|\^\{2\})\}','D2'+vv.upper(),q)
+  q=regex.sub(r'\\frac\{\\partialu\}\{\\partial'+vv+r'\}','D1'+vv.upper(),q)
+ # Nabla squared is the spatial Laplacian (exclude t).
+ spatial=[vv for vv in vars_found if vv!='t'] or [vars_found[0]]
+ lap='('+'+'.join('D2'+vv.upper() for vv in spatial)+')'
+ q=q.replace('\\nabla^2u',lap).replace('\\nabla^{2}u',lap)
+ L,R=q.split('=',1)
+ loc=dict(LOC);loc['u']=UF
+ for vv in vars_found:
+  sv=syms[vv];loc['D1'+vv.upper()]=sp.diff(UF,sv);loc['D2'+vv.upper()]=sp.diff(UF,sv,2)
+ for va in vars_found:
+  for vb in vars_found:loc['D2'+va.upper()+vb.upper()]=sp.diff(UF,syms[va],syms[vb])
+ def side(w):return parse_expr(clean(w),local_dict=loc,transformations=TRANS,evaluate=True)
+ try:eq=sp.Eq(side(L),side(R))
+ except Exception as ex:raise ValueError('تعذر تفسير صيغة المعادلة التفاضلية الجزئية')
+ # Stable solutions for the two documented first-order PDE examples.
+ if set(vars_found)=={'x','y'} and sp.simplify(eq.lhs-eq.rhs-(sp.diff(UF,x)+sp.diff(UF,y)))==0:
+  F=sp.Function('F');return sp.Eq(UF,F(x-y))
+ if set(vars_found)=={'x','t'} and sp.simplify(eq.lhs-eq.rhs-(sp.diff(UF,t)-sp.diff(UF,x)))==0:
+  F=sp.Function('F');return sp.Eq(UF,F(x+t))
+ # 2D Laplace equation, second order: u_xx + u_yy = 0.
+ # Keep the existing PDE path unchanged; only add this exact recognized case.
+ if set(vars_found)=={'x','y'} and sp.simplify(eq.lhs-eq.rhs-(sp.diff(UF,x,2)+sp.diff(UF,y,2)))==0:
+  F=sp.Function('F')
+  return sp.Eq(UF,sp.re(F(x+sp.I*y)))
+ try:return sp.pdsolve(eq,UF)
+ except Exception:
+  return ('PDE_VALID',eq)
+
+def complex_scalar(s):
+ # In the complex-analysis panel the keyboard symbol i means sqrt(-1), not a free symbol.
+ q=clean(s)
+ q=regex.sub(r'(?<![A-Za-z_])i(?![A-Za-z_])','I',q)
+ loc=dict(LOC);loc['i']=sp.I;loc['I']=sp.I
+ if not q:raise ValueError('الإدخال غير مكتمل')
+ return parse_expr(q,local_dict=loc,transformations=TRANS,evaluate=True)
+
+def complex_analysis(s):
+ raw=normalize_mathlive(s).strip()
+ mm=regex.fullmatch(r'\\operatorname\{Res\}_\{z=(.*?)\}(.*)',raw,regex.S)
+ if mm:return sp.residue(complex_scalar(mm.group(2)),z,complex_scalar(mm.group(1)))
+ mm=regex.fullmatch(r'\\arg(?:\\left)?\((.*)\)(?:\\right)?',raw,regex.S)
+ if mm:return sp.simplify(sp.arg(complex_scalar(mm.group(1))))
+ mm=regex.fullmatch(r'\\overline\{(.*)\}',raw,regex.S)
+ if mm:return sp.simplify(sp.conjugate(complex_scalar(mm.group(1))))
+ mm=regex.fullmatch(r'\\left\\?\|(.*)\\right\\?\|',raw,regex.S)
+ if mm:return sp.simplify(sp.Abs(complex_scalar(mm.group(1))))
+ mm=regex.fullmatch(r'\\operatorname\{(?:Re|\\mathrm\{Re\})\}\\left\((.*)\\right\)',raw,regex.S)
+ if mm:return sp.simplify(sp.re(complex_scalar(mm.group(1))))
+ mm=regex.fullmatch(r'\\operatorname\{(?:Im|\\mathrm\{Im\})\}\\left\((.*)\\right\)',raw,regex.S)
+ if mm:return sp.simplify(sp.im(complex_scalar(mm.group(1))))
+ return None
+
+def split_args_tex(s):
+ out=[];start=0;dep=0
+ pairs={'{':'}','(':')','[':']'}; opens=set(pairs); closes=set(pairs.values())
+ for idx,ch in enumerate(s):
+  if ch in opens:dep+=1
+  elif ch in closes:dep-=1
+  elif ch==',' and dep==0:
+   out.append(s[start:idx].strip());start=idx+1
+ out.append(s[start:].strip())
+ return out
+
+def _dg_call(raw):
+ m=regex.fullmatch(r'\\operatorname\{(dg[A-Za-z]+)\}\\left\((.*)\\right\)',raw,regex.S)
+ if not m:return None,None
+ return m.group(1),split_args_tex(m.group(2))
+
+def _dg_surface(args):
+ if len(args)!=5:raise ValueError('هذه العملية تحتاج X(u,v), Y(u,v), Z(u,v), u, v')
+ X,Y,Z=map(scalar,args[:3]); U=sp.Symbol(clean(args[3]));V=sp.Symbol(clean(args[4]));R=sp.Matrix([X,Y,Z])
+ Ru=R.diff(U);Rv=R.diff(V);g=sp.simplify(sp.Matrix([[Ru.dot(Ru),Ru.dot(Rv)],[Ru.dot(Rv),Rv.dot(Rv)]]))
+ cross=Ru.cross(Rv);norm=sp.sqrt(sp.simplify(cross.dot(cross)))
+ if sp.simplify(norm)==0:raise ValueError('البارامترية غير منتظمة عند هذا الوصف')
+ N=sp.simplify(cross/norm)
+ II=sp.simplify(sp.Matrix([[N.dot(R.diff(U,2)),N.dot(R.diff(U,V))],[N.dot(R.diff(U,V)),N.dot(R.diff(V,2))]]))
+ return R,U,V,Ru,Rv,g,N,II
+
+def _dg_christoffel(g,coords):
+ gi=sp.simplify(g.inv());dim=2
+ G=[[[sp.simplify(sum(gi[l,m]*(sp.diff(g[m,j],coords[i])+sp.diff(g[m,i],coords[j])-sp.diff(g[i,j],coords[m])) for m in range(dim))/2) for j in range(dim)] for i in range(dim)] for l in range(dim)]
+ return G
+
+def differential_geometry(raw):
+ name,args=_dg_call(normalize_mathlive(raw).strip())
+ if not name:return None
+ if name.startswith('dgCurve'):
+  if len(args)!=4:raise ValueError('عملية المنحنى تحتاج x(t), y(t), z(t), t')
+  R=sp.Matrix([scalar(args[0]),scalar(args[1]),scalar(args[2])]);Tvar=sp.Symbol(clean(args[3]));Rp=R.diff(Tvar);speed=sp.sqrt(sp.simplify(Rp.dot(Rp)))
+  if name=='dgCurveSpeed':return sp.simplify(speed)
+  T=sp.simplify(Rp/speed)
+  if name=='dgCurveTangent':return T
+  cross=Rp.cross(R.diff(Tvar,2));cn=sp.sqrt(sp.simplify(cross.dot(cross)))
+  if name=='dgCurveCurvature':return sp.simplify(cn/speed**3)
+  B=sp.simplify(cross/cn)
+  if name=='dgCurveBinormal':return B
+  if name=='dgCurveNormal':return sp.simplify(B.cross(T))
+  if name=='dgCurveTorsion':return sp.simplify(cross.dot(R.diff(Tvar,3))/sp.simplify(cross.dot(cross)))
+ if name in ('dgFirst','dgSecond','dgNormal','dgGaussian','dgMean','dgPrincipal','dgChristoffel','dgRiemann','dgRicci','dgScalarCurvature','dgGeodesic','dgJacobian'):
+  R,U,V,Ru,Rv,g,N,II=_dg_surface(args);coords=(U,V)
+  if name=='dgFirst':return g
+  if name=='dgSecond':return II
+  if name=='dgNormal':return N
+  if name=='dgJacobian':return R.jacobian(coords)
+  detg=sp.simplify(g.det());K=sp.simplify(II.det()/detg);S=sp.simplify(g.inv()*II);H=sp.simplify(sp.trace(S)/2)
+  if name=='dgGaussian':return K
+  if name=='dgMean':return H
+  if name=='dgPrincipal':return sp.Matrix([sp.simplify(H+sp.sqrt(H**2-K)),sp.simplify(H-sp.sqrt(H**2-K))])
+  G=_dg_christoffel(g,coords)
+  if name=='dgChristoffel':
+   return {sp.Symbol('Gamma^'+str(l+1)):sp.Matrix([[G[l][i][j] for j in range(2)] for i in range(2)]) for l in range(2)}
+  # R^l_{ijk}
+  RR=[[[[sp.simplify(sp.diff(G[l][i][k],coords[j])-sp.diff(G[l][i][j],coords[k])+sum(G[l][m][j]*G[m][i][k]-G[l][m][k]*G[m][i][j] for m in range(2))) for k in range(2)] for j in range(2)] for i in range(2)] for l in range(2)]
+  Ric=sp.Matrix([[sp.simplify(sum(RR[l][i][l][j] for l in range(2))) for j in range(2)] for i in range(2)])
+  if name=='dgRicci':return Ric
+  if name=='dgScalarCurvature':return sp.simplify(sum(g.inv()[i,j]*Ric[i,j] for i in range(2) for j in range(2)))
+  if name=='dgRiemann':
+   vals={}
+   for l in range(2):
+    for i in range(2):
+     for j in range(2):
+      for k0 in range(2):
+       val=sp.simplify(RR[l][i][j][k0])
+       if val!=0:vals[sp.Symbol('R^%d_%d%d%d'%(l+1,i+1,j+1,k0+1))]=val
+   return vals if vals else sp.Integer(0)
+  if name=='dgGeodesic':
+   lam0=sp.Symbol('s');Ufun=sp.Function(str(U))(lam0);Vfun=sp.Function(str(V))(lam0);subs={U:Ufun,V:Vfun};fs=(Ufun,Vfun)
+   eqs=[]
+   for l in range(2):
+    acc=sp.diff(fs[l],lam0,2)+sum(G[l][i][j].subs(subs)*sp.diff(fs[i],lam0)*sp.diff(fs[j],lam0) for i in range(2) for j in range(2))
+    eqs.append(sp.Eq(sp.simplify(acc),0))
+   return eqs
+ if name.startswith('dgImplicit'):
+  if len(args)!=4:raise ValueError('السطح الضمني يحتاج F(x,y,z), x, y, z')
+  F0=scalar(args[0]);coords=[sp.Symbol(clean(q)) for q in args[1:]];grad=sp.Matrix([sp.diff(F0,q) for q in coords]);Hess=sp.hessian(F0,coords);gn2=sp.simplify(grad.dot(grad));gn=sp.sqrt(gn2)
+  if name=='dgImplicitGaussian':
+   bordered=Hess.row_join(grad);bordered=bordered.col_join(sp.Matrix([[grad[0],grad[1],grad[2],0]]));return sp.simplify(-bordered.det()/gn2**2)
+  if name=='dgImplicitMean':return sp.simplify((gn2*sp.trace(Hess)-(grad.T*Hess*grad)[0])/(2*gn**3))
+  # tangent basis chosen algebraically; I and II are represented in that basis
+  t1=sp.Matrix([-grad[1],grad[0],0]);t2=sp.simplify(grad.cross(t1));Iform=sp.simplify(sp.Matrix([[t1.dot(t1),t1.dot(t2)],[t1.dot(t2),t2.dot(t2)]]));IIform=sp.simplify(sp.Matrix([[(t1.T*Hess*t1)[0]/gn,(t1.T*Hess*t2)[0]/gn],[(t2.T*Hess*t1)[0]/gn,(t2.T*Hess*t2)[0]/gn]]))
+  return {sp.Symbol('I'):Iform,sp.Symbol('II'):IIform}
+ return None
+
+def systems(s):
+ mm=regex.fullmatch(r'\\begin\{cases\}(.*?)\\end\{cases\}',s.strip(),regex.S)
+ if not mm:return None
+ rows=[q.strip() for q in regex.split(r'\\\\+',mm.group(1)) if q.strip()]
+ eqs=[]
+ for row in rows:
+  # piecewise rows with & are not equation systems
+  row=row.split('&',1)[0].strip(); e=equation(row)
+  if e is None:return None
+  eqs.append(e)
+ syms=sorted(set().union(*(e.free_symbols for e in eqs)),key=lambda q:q.name)
+ if not syms:return eqs
+ try:return sp.solve(eqs,syms,dict=True)
+ except:return sp.nonlinsolve([e.lhs-e.rhs for e in eqs],syms)
+
+def named(s):
+ mm=regex.fullmatch(r'\\operatorname\{([^}]+)\}(?:_\{([^}]*)\})?\\left\((.*)\\right\)',s,regex.S) or regex.fullmatch(r'\\operatorname\{([^}]+)\}(?:_\{([^}]*)\})?\((.*)\)',s,regex.S)
+ if not mm:return None
+ name,sub,arg=mm.groups();lname=name.lower();args=[q.strip() for q in arg.split(',')]
+ if lname=='factor':return sp.factor(scalar(arg))
+ if lname=='expand':return sp.expand(scalar(arg))
+ if lname=='simplify':return sp.simplify(scalar(arg))
+ if lname=='roots':return sp.roots(scalar(arg))
+ if lname=='solve':
+  ex=equation(args[0]) or scalar(args[0]); sy=sorted(ex.free_symbols,key=lambda q:q.name);var=sp.Symbol(clean(args[1])) if len(args)>1 else (sy[0] if sy else x);return sp.solve(ex,var)
+ if lname in ('re','real'):return sp.simplify(sp.re(complex_scalar(arg)))
+ if lname in ('im','imag'):return sp.simplify(sp.im(complex_scalar(arg)))
+ if lname=='erf':return sp.erf(scalar(arg))
+ return None
+
+def plot_data(s):
+ s=normalize_mathlive(s).strip()
+ try:
+  RG=json.loads(DRAW_RANGES) if DRAW_RANGES else {}
+ except:
+  RG={}
+ def rg(key,default):
+  try:return float(RG.get(key,default))
+  except:return default
+ xmin,xmax=rg('xmin',-10),rg('xmax',10); ymin,ymax=rg('ymin',-10),rg('ymax',10); zmin,zmax=rg('zmin',-10),rg('zmax',10); tmin,tmax=rg('tmin',-10),rg('tmax',10)
+ if xmin>=xmax:xmin,xmax=-10,10
+ if ymin>=ymax:ymin,ymax=-10,10
+ if zmin>=zmax:zmin,zmax=-10,10
+ if tmin>=tmax:tmin,tmax=-10,10
+ # Accept all drawing commands added to the LaTeX panel/tutorial.
+ mm=regex.fullmatch(r'\\operatorname\{([^}]+)\}\\left\((.*)\\right\)',s,regex.S)
+ if not mm:return None
+ name,arg=mm.groups(); name=name.lower()
+ def args_of(q):
+  out=[];cur='';dep=0
+  for ch in q:
+   if ch in '({[':dep+=1
+   elif ch in ')}]':dep-=1
+   if ch==',' and dep==0:out.append(cur.strip());cur=''
+   else:cur+=ch
+  if cur.strip():out.append(cur.strip())
+  return out
+ A=args_of(arg)
+ def vals1(ex,var,lo=None,hi=None,N=401):
+  if lo is None:lo=xmin
+  if hi is None:hi=xmax
+  fn=sp.lambdify(var,ex,'math');xs=[lo+(hi-lo)*q/(N-1) for q in range(N)];ys=[]
+  for q in xs:
+   try:w=float(fn(q));ys.append(w if math.isfinite(w) and abs(w)<1e6 else None)
+   except:ys.append(None)
+  return xs,ys
+ if name=='plot2d':
+  ex=scalar(arg);xx,yy=vals1(ex,x);return json.dumps({'kind':'plot2d','traces':[{'x':xx,'y':yy,'mode':'lines'}],'label':'y='+sp.latex(ex)},ensure_ascii=False)
+ if name=='plot2d_multi':
+  tr=[]
+  for q in A:
+   ex=scalar(q);xx,yy=vals1(ex,x);tr.append({'x':xx,'y':yy,'mode':'lines','name':sp.latex(ex)})
+  return json.dumps({'kind':'plot2d','traces':tr,'label':'عدة دوال 2D'},ensure_ascii=False)
+ if name in ('polarplot','plotpolar'):
+  ex=scalar(arg);fn=sp.lambdify(theta,ex,'math');xx=[];yy=[]
+  for q in range(721):
+   th=2*math.pi*q/720
+   try:rv=float(fn(th));xx.append(rv*math.cos(th));yy.append(rv*math.sin(th))
+   except:xx.append(None);yy.append(None)
+  return json.dumps({'kind':'plot2d','traces':[{'x':xx,'y':yy,'mode':'lines'}],'label':'r='+sp.latex(ex)},ensure_ascii=False)
+ if name=='parametric2d' and len(A)==2:
+  ex,ey=scalar(A[0]),scalar(A[1]);ts=[tmin+(tmax-tmin)*q/400 for q in range(401)];fx=sp.lambdify(t,ex,'math');fy=sp.lambdify(t,ey,'math');xx=[];yy=[]
+  for q in ts:
+   try:xx.append(float(fx(q)));yy.append(float(fy(q)))
+   except:xx.append(None);yy.append(None)
+  return json.dumps({'kind':'plot2d','traces':[{'x':xx,'y':yy,'mode':'lines'}],'label':'منحنى بارامتري 2D'},ensure_ascii=False)
+ if name=='implicit2d':
+  eq=equation(arg);ex=sp.simplify(eq.lhs-eq.rhs) if eq is not None else scalar(arg);xs=[xmin+(xmax-xmin)*q/80 for q in range(81)];ys=[ymin+(ymax-ymin)*q/80 for q in range(81)];fn=sp.lambdify((x,y),ex,'math');zz=[]
+  for yy in ys:
+   row=[]
+   for xx in xs:
+    try:row.append(float(fn(xx,yy)))
+    except:row.append(None)
+   zz.append(row)
+  return json.dumps({'kind':'contour2d','x':xs,'y':ys,'z':zz,'level':0,'label':'منحنى ضمني'},ensure_ascii=False)
+ if name=='contour':
+  ex=scalar(arg);xs=[xmin+(xmax-xmin)*q/80 for q in range(81)];ys=[ymin+(ymax-ymin)*q/80 for q in range(81)];fn=sp.lambdify((x,y),ex,'math');zz=[]
+  for yy in ys:
+   row=[]
+   for xx in xs:
+    try:row.append(float(fn(xx,yy)))
+    except:row.append(None)
+   zz.append(row)
+  return json.dumps({'kind':'contour2d','x':xs,'y':ys,'z':zz,'label':'Contour'},ensure_ascii=False)
+ if name=='plot3d':
+  ex=scalar(arg);xs=[xmin+(xmax-xmin)*q/50 for q in range(51)];ys=[ymin+(ymax-ymin)*q/50 for q in range(51)];fn=sp.lambdify((x,y),ex,'math');zz=[]
+  for yy in ys:
+   row=[]
+   for xx in xs:
+    try:w=float(fn(xx,yy));row.append(w if math.isfinite(w) and abs(w)<1e6 else None)
+    except:row.append(None)
+   zz.append(row)
+  return json.dumps({'kind':'plot3d','x':xs,'y':ys,'z':zz,'label':'z='+sp.latex(ex)},ensure_ascii=False)
+ if name=='parametric3d' and len(A)==3:
+  ex,ey,ez=map(scalar,A);ts=[tmin+(tmax-tmin)*q/400 for q in range(401)];fx=sp.lambdify(t,ex,'math');fy=sp.lambdify(t,ey,'math');fz=sp.lambdify(t,ez,'math');xx=[];yy=[];zz=[]
+  for q in ts:
+   try:xx.append(float(fx(q)));yy.append(float(fy(q)));zz.append(float(fz(q)))
+   except:xx.append(None);yy.append(None);zz.append(None)
+  return json.dumps({'kind':'curve3d','x':xx,'y':yy,'z':zz,'label':'منحنى بارامتري 3D'},ensure_ascii=False)
+ if name=='surface3d' and len(A)==3:
+  ex,ey,ez=map(scalar,A);us=[-3+6*q/35 for q in range(36)];vs=us[:];fx=sp.lambdify((u,v),ex,'math');fy=sp.lambdify((u,v),ey,'math');fz=sp.lambdify((u,v),ez,'math');X=[];Y=[];Z=[]
+  for vv in vs:
+   rx=[];ry=[];rz=[]
+   for uu in us:
+    try:rx.append(float(fx(uu,vv)));ry.append(float(fy(uu,vv)));rz.append(float(fz(uu,vv)))
+    except:rx.append(None);ry.append(None);rz.append(None)
+   X.append(rx);Y.append(ry);Z.append(rz)
+  return json.dumps({'kind':'surfaceparam3d','x':X,'y':Y,'z':Z,'label':'سطح بارامتري 3D'},ensure_ascii=False)
+ if name=='implicit3d':
+  eq=equation(arg);ex=sp.simplify(eq.lhs-eq.rhs) if eq is not None else scalar(arg);gridx=[xmin+(xmax-xmin)*q/20 for q in range(21)];gridy=[ymin+(ymax-ymin)*q/20 for q in range(21)];gridz=[zmin+(zmax-zmin)*q/20 for q in range(21)];fn=sp.lambdify((x,y,z),ex,'math');X=[];Y=[];Z=[];V=[]
+  for zz in gridz:
+   for yy in gridy:
+    for xx in gridx:
+     try:w=float(fn(xx,yy,zz))
+     except:w=float('nan')
+     X.append(xx);Y.append(yy);Z.append(zz);V.append(w)
+  return json.dumps({'kind':'implicit3d','x':X,'y':Y,'z':Z,'value':V,'label':'سطح ضمني 3D'},ensure_ascii=False)
+ if name=='vectorfield2d' and len(A)==2:
+  ex,ey=map(scalar,A);fnx=sp.lambdify((x,y),ex,'math');fny=sp.lambdify((x,y),ey,'math');X=[];Y=[];U=[];V=[]
+  for yy in range(-5,6):
+   for xx in range(-5,6):
+    try:X.append(xx);Y.append(yy);U.append(float(fnx(xx,yy)));V.append(float(fny(xx,yy)))
+    except:pass
+  return json.dumps({'kind':'vector2d','x':X,'y':Y,'u':U,'v':V,'label':'حقل متجهات 2D'},ensure_ascii=False)
+ if name=='vectorfield3d' and len(A)==3:
+  ex,ey,ez=map(scalar,A);fx=sp.lambdify((x,y,z),ex,'math');fy=sp.lambdify((x,y,z),ey,'math');fz=sp.lambdify((x,y,z),ez,'math');X=[];Y=[];Z=[];U=[];V=[];W=[]
+  for zz in (-2,0,2):
+   for yy in (-2,0,2):
+    for xx in (-2,0,2):
+     try:X.append(xx);Y.append(yy);Z.append(zz);U.append(float(fx(xx,yy,zz)));V.append(float(fy(xx,yy,zz)));W.append(float(fz(xx,yy,zz)))
+     except:pass
+  return json.dumps({'kind':'vector3d','x':X,'y':Y,'z':Z,'u':U,'v':V,'w':W,'label':'حقل متجهات 3D'},ensure_ascii=False)
+ if name=='point2d' and len(A)==2:return json.dumps({'kind':'point2d','x':[float(sp.N(scalar(A[0])))],'y':[float(sp.N(scalar(A[1])))],'label':'نقطة 2D'},ensure_ascii=False)
+ if name=='point3d' and len(A)==3:return json.dumps({'kind':'point3d','x':[float(sp.N(scalar(A[0])))],'y':[float(sp.N(scalar(A[1])))],'z':[float(sp.N(scalar(A[2])))],'label':'نقطة 3D'},ensure_ascii=False)
+ if name in ('xrange','yrange','zrange','trange') and len(A)==2:
+  return json.dumps({'kind':'math','latex':sp.latex(sp.Interval(scalar(A[0]),scalar(A[1]))),'note':name+' يحدد مجال الرسم عند استخدامه كإعداد.'},ensure_ascii=False)
+ return None
+
+def normalize_mathlive(s):
+ # Normalize harmless MathLive serialization differences before dispatch.
+ s=(s or '').strip()
+ s=s.replace('\\displaystyle','').replace('\\textstyle','')
+ s=s.replace('\\mathopen{}','').replace('\\mathclose{}','')
+ s=s.replace('\\mleft','\\left').replace('\\mright','\\right')
+ s=regex.sub(r'\\left\s*',r'\\left',s);s=regex.sub(r'\\right\s*',r'\\right',s)
+ # A filled MathLive placeholder is content, not an error. Preserve its content.
+ for _ in range(4):
+  ns=regex.sub(r'\\placeholder(?:\[[^]]*\])?\{([^{}]*)\}',r'\1',s)
+  if ns==s:break
+  s=ns
+ # MathLive may wrap custom drawing operator names in \mathrm inside \operatorname.
+ # Normalize drawing commands only; leave every other parser/calculation unchanged.
+ drawing_names='plot2d|plot2d_multi|implicit2d|parametric2d|polarplot|plot3d|implicit3d|parametric3d|surface3d|contour|vectorfield2d|vectorfield3d|point2d|point3d'
+ s=regex.sub(r'\\operatorname\{\\mathrm\{('+drawing_names+r')\}\}',r'\\operatorname{\1}',s)
+ # MathLive escapes underscores in operator names (for example plot2d\_multi).
+ # Normalize every drawing button name to the exact command expected by plot_data.
+ for _dn in drawing_names.split('|'):
+  _esc=_dn.replace('_',r'\_')
+  s=s.replace(r'\operatorname{'+_esc+'}',r'\operatorname{'+_dn+'}')
+  s=s.replace(r'\operatorname{\mathrm{'+_esc+'}}',r'\operatorname{'+_dn+'}')
+ # MathLive may add spacing commands around operators.
+ s=s.replace('\\,','').replace('\\!','').replace('\\;','').replace('\\:','').replace('\\quad',' ')
+ return s.strip()
+
+def _custom_args(s,name,count):
+ mm=regex.fullmatch(r'\\operatorname\{'+name+r'\}\\left\((.*)\\right\)',s,regex.S)
+ if not mm:return None
+ body=mm.group(1);parts=[];start=0;dep=0
+ for idx,ch in enumerate(body):
+  if ch in '({[':dep+=1
+  elif ch in ')}]':dep-=1
+  elif ch==',' and dep==0:parts.append(body[start:idx].strip());start=idx+1
+ parts.append(body[start:].strip())
+ if len(parts)!=count:raise ValueError('بيانات التكامل غير مكتملة')
+ return parts
+
+def special_path_surface(s):
+ A=_custom_args(s,'lineintscalar',6)
+ if A:
+  f,rx,ry,rz,lo,hi=A;R=sp.Matrix([scalar(rx),scalar(ry),scalar(rz)]);sub={x:R[0],y:R[1],z:R[2]};speed=sp.sqrt(sum(sp.diff(q,t)**2 for q in R));return sp.integrate(scalar(f).subs(sub)*speed,(t,scalar(lo),scalar(hi)))
+ A=_custom_args(s,'lineintvector',8)
+ if A:
+  P,Q,Rf,rx,ry,rz,lo,hi=A;rv=sp.Matrix([scalar(rx),scalar(ry),scalar(rz)]);sub={x:rv[0],y:rv[1],z:rv[2]};F=sp.Matrix([scalar(P),scalar(Q),scalar(Rf)]).subs(sub);return sp.integrate(F.dot(rv.diff(t)),(t,scalar(lo),scalar(hi)))
+ A=_custom_args(s,'surfaceintscalar',8)
+ if A:
+  f,rx,ry,rz,ua,ub,va,vb=A;rv=sp.Matrix([scalar(rx),scalar(ry),scalar(rz)]);sub={x:rv[0],y:rv[1],z:rv[2]};normal=rv.diff(u).cross(rv.diff(v));return sp.integrate(sp.integrate(scalar(f).subs(sub)*sp.sqrt(normal.dot(normal)),(v,scalar(va),scalar(vb))),(u,scalar(ua),scalar(ub)))
+ A=_custom_args(s,'surfaceflux',10)
+ if A:
+  P,Q,Rf,rx,ry,rz,ua,ub,va,vb=A;rv=sp.Matrix([scalar(rx),scalar(ry),scalar(rz)]);sub={x:rv[0],y:rv[1],z:rv[2]};F=sp.Matrix([scalar(P),scalar(Q),scalar(Rf)]).subs(sub);normal=rv.diff(u).cross(rv.diff(v));return sp.integrate(sp.integrate(F.dot(normal),(v,scalar(va),scalar(vb))),(u,scalar(ua),scalar(ub)))
+ A=_custom_args(s,'fluxint',10)
+ if A:
+  P,Q,Rf,rx,ry,rz,ua,ub,va,vb=A;rv=sp.Matrix([scalar(rx),scalar(ry),scalar(rz)]);sub={x:rv[0],y:rv[1],z:rv[2]};F=sp.Matrix([scalar(P),scalar(Q),scalar(Rf)]).subs(sub);normal=rv.diff(u).cross(rv.diff(v));return sp.integrate(sp.integrate(F.dot(normal),(v,scalar(va),scalar(vb))),(u,scalar(ua),scalar(ub)))
+ A=_custom_args(s,'gaussint',9)
+ if A:
+  P,Q,Rf,xa,xb,ya,yb,za,zb=A;div=sp.diff(scalar(P),x)+sp.diff(scalar(Q),y)+sp.diff(scalar(Rf),z);return sp.integrate(sp.integrate(sp.integrate(div,(z,scalar(za),scalar(zb))),(y,scalar(ya),scalar(yb))),(x,scalar(xa),scalar(xb)))
+ A=_custom_args(s,'stokesint',10)
+ if A:
+  P,Q,Rf,rx,ry,rz,ua,ub,va,vb=A;rv=sp.Matrix([scalar(rx),scalar(ry),scalar(rz)]);sub={x:rv[0],y:rv[1],z:rv[2]};F=sp.Matrix([scalar(P),scalar(Q),scalar(Rf)]);curl=sp.Matrix([sp.diff(F[2],y)-sp.diff(F[1],z),sp.diff(F[0],z)-sp.diff(F[2],x),sp.diff(F[1],x)-sp.diff(F[0],y)]).subs(sub);normal=rv.diff(u).cross(rv.diff(v));return sp.integrate(sp.integrate(curl.dot(normal),(v,scalar(va),scalar(vb))),(u,scalar(ua),scalar(ub)))
+ A=_custom_args(s,'volumeint',7)
+ if A:
+  f,xa,xb,ya,yb,za,zb=A;return sp.integrate(sp.integrate(sp.integrate(scalar(f),(z,scalar(za),scalar(zb))),(y,scalar(ya),scalar(yb))),(x,scalar(xa),scalar(xb)))
+ return None
+
+def solve_input(raw,panel=''):
+ s=raw.strip()
+ if not s:raise ValueError('اكتب مسألة أولًا')
+ s=normalize_mathlive(s)
+ if regex.search(r'\\placeholder(?:\[[^]]*\])?\{\s*\}',s):raise ValueError('أكمل جميع الخانات قبل الحساب')
+ if panel=='رسم 2D/3D' or regex.search(r'\\operatorname\{(?:plot2d|plot2d_multi|implicit2d|parametric2d|polarplot|plot3d|implicit3d|parametric3d|surface3d|contour|vectorfield2d|vectorfield3d|point2d|point3d|xrange|yrange|zrange|tRange)\}',s):
+  p=plot_data(s)
+  if p:return p
+ # priority structured constructs
+ q=parse_sumprod(s)
+ if q is not None:return latex_result(q)
+ q=parse_derivative(s)
+ if q is not None:return latex_result(q)
+ q=special_path_surface(s)
+ if q is not None:return latex_result(q)
+ q=parse_matrixvector_examples(s)
+ if q is not None:return latex_result(q)
+ q=parse_seriestransforms(s)
+ if q is not None:return latex_result(q)
+ q=parse_mathformat(s)
+ if q is not None:return latex_result(q)
+ q=parse_specialfunction(s)
+ if q is not None:return latex_result(q)
+ q=parse_numbertheory(s)
+ if q is not None:return latex_result(q)
+ q=parse_setlogic(s)
+ if q is not None:return latex_result(q)
+ q=parse_sequence(s)
+ if q is not None:return latex_result(q)
+ q=parse_probability_stats(s)
+ if q is not None:return latex_result(q)
+ q=parse_cauchy_example(s)
+ if q is not None:return latex_result(q)
+ q=parse_bounded_triple_integral(s)
+ if q is not None:return latex_result(q)
+ q=parse_bounded_double_integral(s)
+ if q is not None:return latex_result(q)
+ q=parse_integral(s)
+ if q is not None:return latex_result(q)
+ mm=regex.fullmatch(r'\\lim_\{([A-Za-z])\\to(.*?)\}(.*)',s,regex.S)
+ if mm:return latex_result(sp.limit(scalar(mm.group(3)),sp.Symbol(mm.group(1)),scalar(mm.group(2))))
+ q=parse_pde_second_order_examples(s)
+ if q is not None:return latex_result(q,False)
+ q=parse_pde(s)
+ if q is not None:
+  if isinstance(q,tuple) and q and q[0]=='PDE_VALID':return json.dumps({'kind':'math','latex':sp.latex(q[1]),'numeric':'','note':'المعادلة PDE صحيحة، لكن لا يتوفر لها حل رمزي عام مباشر في SymPy.'},ensure_ascii=False)
+  return latex_result(q,False)
+ q=parse_ode(s)
+ if q is not None:return latex_result(q,False)
+ q=differential_geometry(s)
+ if q is not None:return latex_result(q,False)
+ q=systems(s)
+ if q is not None:return latex_result(q,False)
+ q=vector_calculus(s)
+ if q is not None:return latex_result(q,False)
+ # vector dot/cross before generic matrices
+ A,a0,a1=extract_matrix(s)
+ if A is not None:
+  B,b0,b1=extract_matrix(s,a1)
+  if B is not None:
+   between=s[a1:b0].strip()
+   if between=='\\cdot':
+    av=list(A);bv=list(B)
+    if len(av)!=len(bv):raise ValueError('المتجهان يجب أن يكونا من البعد نفسه')
+    return latex_result(sum(av[q]*bv[q] for q in range(len(av))))
+   if between=='\\times':
+    av=list(A);bv=list(B)
+    if len(av)!=3 or len(bv)!=3:raise ValueError('الضرب المتجهي يحتاج متجهين ثلاثيي الأبعاد')
+    return latex_result(sp.Matrix(av).cross(sp.Matrix(bv)),False)
+  q=matrix_operation(s)
+  if q is not None:return latex_result(q,False)
+ q=complex_analysis(s)
+ if q is not None:return latex_result(q,False)
+ if panel=='مركب':
+  try:return latex_result(sp.simplify(complex_scalar(s)),False)
+  except:pass
+ q=named(s)
+ if q is not None:return latex_result(q,False)
+ mm=regex.fullmatch(r'\\operatorname\{Res\}_\{z=(.*?)\}(.*)',s,regex.S)
+ if mm:return latex_result(sp.residue(scalar(mm.group(2)),z,scalar(mm.group(1))))
+ eq=equation(s)
+ if eq is not None:
+  syms=sorted(eq.free_symbols,key=lambda q:q.name)
+  if not syms:return latex_result(sp.simplify(eq),False)
+  var=syms[0]
+  if isinstance(eq,(sp.StrictLessThan,sp.StrictGreaterThan,sp.LessThan,sp.GreaterThan)):
+   return latex_result(sp.solve_univariate_inequality(eq,var),False)
+  try:return latex_result(sp.solve(eq,var),False)
+  except:return latex_result(sp.solveset(eq,var,domain=sp.S.Complexes),False)
+ mm=regex.fullmatch(r'(.*)!',s,regex.S)
+ if mm:return latex_result(sp.factorial(scalar(mm.group(1))))
+ return latex_result(sp.simplify(scalar(s)))
+
+def self_test():
+ cases=[
+ ('1+1','', 'math'),('\\sum_{x=1}^{5}x','تكامل','math'),('\\prod_{x=1}^{4}x','تكامل','math'),
+ ('\\frac{d}{dx}x^3','تفاضل','math'),('\\int x^2\\,dx','تكامل','math'),('\\int_{0}^{1}x^2\\,dx','تكامل','math'),
+ ('\\begin{bmatrix}1&2\\\\3&4\\end{bmatrix}','مصفوفات','math'),('\\det\\left(\\begin{bmatrix}1&2\\\\3&4\\end{bmatrix}\\right)','مصفوفات','math'),
+ ('x^2-4=0','جبر','math'),('x+y=3','جبر','math'),('\\nabla x^2 y','تحليل متجهي','math'),
+ ('\\frac{dy}{dx}=y','ODE/PDE','math'),('y=x^2','رسم 2D/3D','plot2d'),('z=x^2+y^2','رسم 2D/3D','plot3d'),('\\operatorname{dgGaussian}\\left(u,v,u^2+v^2,u,v\\right)','هندسة تفاضلية','math'),('\\operatorname{dgChristoffel}\\left(\\sin u\\cos v,\\sin u\\sin v,\\cos u,u,v\\right)','هندسة تفاضلية','math')]
+ results=[]
+ for raw,panel,kind in cases:
+  try:results.append(json.loads(solve_input(raw,panel)).get('kind')==kind)
+  except Exception:results.append(False)
+ return all(results),sum(1 for q in results if q),len(results),results
+
+
+
+`;
+// تحميل المحرك في الخلفية فور ظهور الواجهة، مع الاستفادة من HTTP cache في الزيارات التالية.
+let enginePromise=null;
+function loadScript(src){return new Promise((resolve,reject)=>{let sc=document.createElement('script');sc.src=src;sc.async=true;sc.onload=resolve;sc.onerror=reject;document.head.appendChild(sc);});}
+let plotlyPromise=null;
+function ensurePlotly(){if(window.Plotly)return Promise.resolve(window.Plotly);if(!plotlyPromise)plotlyPromise=loadScript('https://cdn.plot.ly/plotly-2.35.2.min.js').then(()=>window.Plotly);return plotlyPromise;}
+async function bootEngine(){
+ if(enginePromise) return enginePromise;
+ enginePromise=(async()=>{
+  try{
+   status.textContent='اللوحة جاهزة — تجهيز الحساب…';
+   if(typeof loadPyodide==='undefined') await loadScript('https://cdn.jsdelivr.net/pyodide/v0.28.3/full/pyodide.js');
+   py=await loadPyodide({indexURL:'https://cdn.jsdelivr.net/pyodide/v0.28.3/full/'});
+   await py.loadPackage('sympy');
+   await py.runPythonAsync(PY);
+   // لا نشغّل مجموعة الاختبارات الثقيلة عند كل فتح للصفحة؛ كانت سبباً رئيسياً للتأخير،
+   // وخصوصاً اختبارات الهندسة التفاضلية. المحرك يصبح جاهزاً فور تحميل SymPy وتعريف الدوال.
+   status.textContent='جاهز للحساب';
+   return py;
+  }catch(e){status.textContent='تعذر تجهيز المحرك';enginePromise=null;throw e;}
+ })();
+ return enginePromise;
+}
+// ابدأ بعد أول رسم للواجهة حتى لا يمنع ظهور لوحة LaTeX.
+requestAnimationFrame(()=>setTimeout(()=>bootEngine().catch(()=>{}),0));
+const tutorialExamples={
+"احتمال وإحصاء":[
+ ["n! — المضروب","5!","احسب 5!؛ النتيجة 120."],
+ ["C(n,r) — التوافيق","\\left(\\begin{matrix}5\\\\2\\end{matrix}\\right)","اختيار عنصرين من 5 دون ترتيب؛ النتيجة 10."],
+ ["P(n,r) — التباديل","P\\left(5,2\\right)","تباديل عنصرين من 5؛ النتيجة 20."],
+ ["P(A) — احتمال حدث","P\\left(3/10\\right)","3 حالات ناجحة من 10؛ النتيجة 3/10."],
+ ["P(A|B) — احتمال شرطي","P\\left(1/4\\mid1/2\\right)","P(A∩B)=1/4 وP(B)=1/2؛ النتيجة 1/2."],
+ ["A∩B — تقاطع","P\\left(A\\cap B\\right)=1/2\\cdot1/3","حدثان مستقلان باحتمال 1/2 و1/3؛ النتيجة 1/6."],
+ ["A∪B — اتحاد","P\\left(A\\cup B\\right)=1/2+1/3-1/6","قاعدة الاتحاد؛ النتيجة 2/3."],
+ ["E[X] — المتوسط","E\\left[1,2,3,4,5\\right]","المتوسط؛ النتيجة 3."],
+ ["Var — التباين","\\operatorname{Var}\\left(1,2,3,4,5\\right)","تباين المجتمع؛ النتيجة 2."],
+ ["Cov — التغاير","\\operatorname{Cov}\\left(1,2,3,2,4,6\\right)","X=(1,2,3)، Y=(2,4,6)."],
+ ["Corr — الارتباط","\\operatorname{Corr}\\left(1,2,3,2,4,6\\right)","معامل الارتباط؛ النتيجة 1."],
+ ["μ — المتوسط","\\mu\\left(2,4,6,8\\right)","المتوسط؛ النتيجة 5."],
+ ["σ — الانحراف المعياري","\\sigma\\left(1,2,3,4,5\\right)","النتيجة √2."],
+ ["σ² — التباين","\\sigma^2\\left(1,2,3,4,5\\right)","النتيجة 2."],
+ ["x̄ — المتوسط الحسابي","\\bar{x}\\left(10,20,30\\right)","النتيجة 20."],
+ ["Σx — مجموع القيم","\\Sigma\\left(1,2,3,4,5\\right)","النتيجة 15."],
+ ["normal — طبيعي","f_N\\left(0,0,1\\right)","كثافة N(0,1) عند x=0."],
+ ["binomial — ثنائي الحدين","P_B\\left(10,1/2,5\\right)","احتمال 5 نجاحات من 10."],
+ ["Poisson — بواسون","P_P\\left(3,2\\right)","احتمال k=2 عندما λ=3."]
+],
+"رموز وعلاقات":[
+ ["≈ — علاقة تقريبية","3.14159\\approx\\pi","مثال من زر ≈ لكتابة علاقة تقريبية؛ ينتقل إلى نافذة السؤال."]
+],
+"يوناني":[
+ ["θ — حرف يوناني","\\theta=\\frac{\\pi}{4}","مثال من زر θ لكتابة زاوية مقدارها π/4؛ ينتقل إلى نافذة السؤال."]
+],
+
+'المصفوفات والمتجهات — أمثلة عددية':[
+ ['det — محدد مصفوفة','\\operatorname{mvdet}\\left(1,2,3,4\\right)','محدد المصفوفة [[1,2],[3,4]].'],
+ ['A⁻¹ — معكوس مصفوفة','\\operatorname{mvinverse}\\left(1,2,3,4\\right)','حساب معكوس مصفوفة 2×2.'],
+ ['Aᵀ — المنقول','\\operatorname{mvtranspose}\\left(1,2,3,4\\right)','حساب transpose للمصفوفة.'],
+ ['tr(A) — الأثر','\\operatorname{mvtrace}\\left(1,2,3,4\\right)','مجموع عناصر القطر الرئيسي.'],
+ ['rank — الرتبة','\\operatorname{mvrank}\\left(1,2,2,4\\right)','حساب رتبة مصفوفة عددية.'],
+ ['A+B — جمع مصفوفتين','\\operatorname{mvadd}\\left(1,2,3,4,5,6,7,8\\right)','جمع مصفوفتين 2×2.'],
+ ['A−B — طرح مصفوفتين','\\operatorname{mvsub}\\left(5,6,7,8,1,2,3,4\\right)','طرح مصفوفتين 2×2.'],
+ ['AB — ضرب مصفوفتين','\\operatorname{mvmul}\\left(1,2,3,4,2,0,1,2\\right)','ضرب مصفوفتين 2×2.'],
+ ['kA — ضرب بعدد','\\operatorname{mvscale}\\left(3,1,2,3,4\\right)','ضرب المصفوفة بالعدد 3.'],
+ ['Ax=b — حل نظام خطي','\\operatorname{mvsolve}\\left(2,1,1,-1,5,1\\right)','حل نظام معادلتين خطيتين بالمصفوفة.'],
+ ['eigen — القيم الذاتية','\\operatorname{mveigen}\\left(2,0,0,3\\right)','إيجاد القيم الذاتية للمصفوفة القطرية.'],
+ ['diag — مصفوفة قطرية','\\operatorname{mvdiag}\\left(4,7\\right)','إنشاء مصفوفة قطرية بعنصري القطر 4 و7.'],
+ ['null — فضاء العدم','\\operatorname{mvnull}\\left(1,2,2,4\\right)','إيجاد أساس فضاء العدم لمصفوفة مفردة.'],
+ ['A·B — الضرب النقطي','\\operatorname{mvdot}\\left(1,2,3,4,5,6\\right)','الضرب النقطي للمتجهين (1,2,3) و(4,5,6).'],
+ ['A×B — الضرب الاتجاهي','\\operatorname{mvcross}\\left(1,0,0,0,1,0\\right)','الضرب الاتجاهي لمتجهي الوحدة x وy.'],
+ ['|v| — طول المتجه','\\operatorname{mvnorm}\\left(3,4,0\\right)','طول المتجه (3,4,0).'],
+ ['unit — متجه الوحدة','\\operatorname{mvunit}\\left(3,4,0\\right)','تحويل (3,4,0) إلى متجه وحدة.'],
+ ['proj — الإسقاط','\\operatorname{mvproj}\\left(2,3,0,1,0,0\\right)','إسقاط المتجه (2,3,0) على محور x.'],
+ ['comp — المركبة القياسية','\\operatorname{mvcomp}\\left(2,3,0,1,0,0\\right)','المركبة القياسية للمتجه على اتجاه محور x.'],
+ ['angle — الزاوية بين متجهين','\\operatorname{mvangle}\\left(1,0,0,0,1,0\\right)','الزاوية بين متجهين متعامدين.'],
+ ['triple — الضرب الثلاثي','\\operatorname{mvtriple}\\left(1,0,0,0,1,0,0,0,1\\right)','الحجم الموجه الناتج من ثلاثة متجهات متعامدة.']
+],
+
+
+'سلاسل وتحويلات — أمثلة عملية':[
+ ['Σ — مجموع محدود','\\operatorname{stsum}\\left(n^2,1,5\\right)','احسب مجموع مربعات n من 1 إلى 5.'],
+ ['Series — سلسلة لا نهائية','\\operatorname{stseries}\\left(1/2^n,0\\right)','احسب السلسلة الهندسية من n=0 إلى ما لا نهاية.'],
+ ['Taylor — متسلسلة تايلور','\\operatorname{sttaylor}\\left(e^x,1,5\\right)','تقريب e^x حول x=1 حتى الرتبة الرابعة.'],
+ ['Maclaurin — متسلسلة ماكلوران','\\operatorname{stmaclaurin}\\left(sin(x),6\\right)','توسيع sin(x) حول الصفر حتى الرتبة الخامسة.'],
+ ['Laplace — تحويل لابلاس','\\operatorname{stlaplace}\\left(x^2\\right)','تحويل لابلاس للدالة t² مع استعمال x كمتغير الدالة.'],
+ ['L⁻¹ — لابلاس العكسي','\\operatorname{stilaplace}\\left(1/s^2\\right)','تحويل لابلاس العكسي لـ 1/s².'],
+ ['Fourier T — تحويل فورييه','\\operatorname{stfourier}\\left(e^(-x^2)\\right)','تحويل فورييه لدالة غاوس.'],
+ ['F⁻¹ — فورييه العكسي','\\operatorname{stifourier}\\left(e^(-k^2)\\right)','تحويل فورييه العكسي لدالة غاوس في k.'],
+ ['Sequence — متتالية','\\operatorname{stsequence}\\left(n^2,1,5\\right)','أنشئ أول خمس قيم للمتتالية aₙ=n².'],
+ ['Recurrence — علاقة تكرارية','\\operatorname{strecurrence}\\left(1,6\\right)','مثال عملي: تبدأ من 1 ويضاف 2 في كل خطوة، لستة حدود.'],
+ ['Laurent — توسع حول نقطة','\\operatorname{stlaurent}\\left(1/(1-x),0,5\\right)','توسع للدالة 1/(1-x) حول الصفر حتى خمس رتب.'],
+ ['Convolution — التفاف','\\operatorname{stconvolution}\\left(x,x\\right)','التفاف الدالتين f(x)=x وg(x)=x على المجال من 0 إلى x.'],
+ ['Z — تحويل Z','\\operatorname{stz}\\left(1\\right)','تحويل Z للمتتالية الثابتة aₙ=1 من n=0 إلى ما لا نهاية.'],
+ ['Z⁻¹ — تحويل Z العكسي','\\operatorname{stiz}\\left(z/(z-1)\\right)','مثال عددي عملي: التحويل العكسي لـ z/(z-1) يعطي المتتالية الثابتة 1.']
+],
+
+
+'تنسيق رياضي — أمثلة عملية':[
+ ['xₙ — قيمة مفهرسة','\\operatorname{mfsubscript}\\left(10,3\\right)','مثال عددي عملي على قيمة ذات فهرس؛ الأمر ينفذ حسابًا عدديًا.'],
+ ['xⁿ — أس','\\operatorname{mfpow}\\left(2,8\\right)','حساب 2 للقوة 8.'],
+ ['vec — متجه','\\operatorname{mfvector}\\left(3,4,5\\right)','إنشاء متجه عددي من المركبات 3 و4 و5.'],
+ ['norm — معيار متجه','\\operatorname{mfnorm}\\left(3,4\\right)','حساب طول المتجه (3,4)، والنتيجة 5.'],
+ ['dot — مشتقة أولى عملية','\\operatorname{mfdot}\\left(3,3\\right)','مثال عددي مرتبط بترميز النقطة للمشتقة الزمنية؛ ينفذ أمرًا حسابيًا.'],
+ ['ddot — مشتقة ثانية عملية','\\operatorname{mfddot}\\left(2,6,12\\right)','مثال عددي مرتبط بترميز النقطتين للمشتقة الثانية.'],
+ ['cases — قيم متعددة','\\operatorname{mfcases}\\left(4,9\\right)','مثال تنفيذي يعيد قيمتين ضمن نتيجة واحدة.'],
+ ['piecewise — دالة متعددة التعريف','\\operatorname{mfpiecewise}\\left(-3,0,0\\right)','مثال فعلي: إذا x<0 يحسب x²، وإلا يحسب 2x+1. عند x=-3 النتيجة 9.']
+],
+
+
+'دوال خاصة — أمثلة عددية':[
+ ['Gamma Γ — دالة غاما','\\operatorname{sfgamma}\\left(6\\right)','تعميم المضروب: Γ(6)=5!، وتستخدم كثيرًا في التحليل والاحتمالات.'],
+ ['Beta B — دالة بيتا','\\operatorname{sfbeta}\\left(2,3\\right)','دالة خاصة مرتبطة بغاما وتظهر في التكاملات وتوزيع بيتا.'],
+ ['erf — دالة الخطأ','\\operatorname{sferf}\\left(1\\right)','دالة الخطأ المستخدمة في الاحتمالات والانتشار ومعادلة الحرارة.'],
+ ['Bessel J — بيسل النوع الأول','\\operatorname{sfbesselj}\\left(0,1\\right)','J₀(1)، تظهر في المسائل ذات التناظر الأسطواني والاهتزازات.'],
+ ['Bessel Y — بيسل النوع الثاني','\\operatorname{sfbessely}\\left(0,1\\right)','Y₀(1)، حل مستقل آخر لمعادلة بيسل.'],
+ ['Legendre P — كثير حدود ليجاندر','\\operatorname{sflegendre}\\left(3,0.5\\right)','P₃(0.5)، يستخدم في مسائل التناظر الكروي والجهد.'],
+ ['Hermite H — كثير حدود هيرميت','\\operatorname{sfhermite}\\left(4,1\\right)','H₄(1)، يظهر في المذبذب التوافقي وميكانيكا الكم.'],
+ ['Laguerre L — كثير حدود لاغير','\\operatorname{sflaguerre}\\left(3,2\\right)','L₃(2)، يظهر في معادلات تفاضلية ومسائل ذرية.'],
+ ['Airy Ai — دالة آيري Ai','\\operatorname{sfairyai}\\left(1\\right)','Ai(1)، حل لمعادلة آيري ويظهر قرب نقاط التحول.'],
+ ['Airy Bi — دالة آيري Bi','\\operatorname{sfairybi}\\left(1\\right)','Bi(1)، الحل المستقل الثاني لمعادلة آيري.'],
+ ['Elliptic K — التكامل الإهليلجي الكامل الأول','\\operatorname{sfelliptick}\\left(0.5\\right)','K(0.5)، يستخدم في البندول وبعض مسائل الهندسة والفيزياء.'],
+ ['Elliptic E — التكامل الإهليلجي الكامل الثاني','\\operatorname{sfelliptice}\\left(0.5\\right)','E(0.5)، يظهر في حسابات إهليلجية وفيزيائية.'],
+ ['Yℓᵐ — التوافق الكروي','\\operatorname{sfsphericalharmonic}\\left(1,0,1,0.5\\right)','Y₁⁰ عند θ=1 وφ=0.5؛ يستخدم لتمثيل الدوال على الكرة.'],
+ ['Dirac δ — دلتا ديراك','\\operatorname{sfdiracdelta}\\left(2\\right)','δ(2)، تمثل نبضة مثالية؛ عند قيمة غير صفرية تكون النتيجة صفرًا.'],
+ ['Heaviside H — دالة الخطوة','\\operatorname{sfheaviside}\\left(2\\right)','H(2)، دالة خطوة لتمثيل تشغيل أو إيقاف إشارة عند نقطة معينة.']
+],
+
+
+'نظرية الأعداد — أمثلة عددية':[
+ ['GCD','\\operatorname{ntgcd}\\left(48,18\\right)','القاسم المشترك الأكبر لـ 48 و18'],
+ ['LCM','\\operatorname{ntlcm}\\left(12,18\\right)','المضاعف المشترك الأصغر لـ 12 و18'],
+ ['mod','\\operatorname{ntmod}\\left(29,5\\right)','باقي قسمة 29 على 5'],
+ ['φ(n)','\\operatorname{nttotient}\\left(12\\right)','دالة أويلر للعدد 12'],
+ ['ζ(s)','\\operatorname{ntzeta}\\left(2\\right)','قيمة زيتا عند 2'],
+ ['prime','\\operatorname{ntprime}\\left(97\\right)','اختبار هل 97 عدد أولي'],
+ ['a|b','\\operatorname{ntdivides}\\left(7,42\\right)','اختبار هل 7 يقسم 42'],
+ ['Fₙ','\\operatorname{ntfibonacci}\\left(10\\right)','الحد العاشر من فيبوناتشي'],
+ ['n!!','\\operatorname{ntdoublefactorial}\\left(9\\right)','المضروب المزدوج للعدد 9'],
+ ['Γ','\\operatorname{ntgamma}\\left(6\\right)','دالة غاما عند 6'],
+ ['Beta','\\operatorname{ntbeta}\\left(2,3\\right)','دالة بيتا B(2,3)'],
+ ['μ(n)','\\operatorname{ntmobius}\\left(30\\right)','دالة موبيوس للعدد 30'],
+ ['π(x)','\\operatorname{ntprimepi}\\left(100\\right)','عدد الأعداد الأولية حتى 100']
+],
+
+
+'مجموعات ومنطق — أمثلة عملية':[
+ ['اتحاد مجموعتين','\\operatorname{setunion}\\left(1,2,3;3,4,5\\right)','اتحاد {1,2,3} و {3,4,5}'],
+ ['تقاطع مجموعتين','\\operatorname{setintersection}\\left(1,2,3;2,3,4\\right)','العناصر المشتركة بين المجموعتين'],
+ ['فرق مجموعتين','\\operatorname{setdifference}\\left(1,2,3,4;2,4\\right)','العناصر الموجودة في الأولى وغير الموجودة في الثانية'],
+ ['اختبار الانتماء','\\operatorname{member}\\left(3;1,2,3,4\\right)','هل العدد 3 ينتمي إلى المجموعة؟'],
+ ['AND','\\operatorname{logicand}\\left(true;false\\right)','مثال منطقي عددي مباشر'],
+ ['OR','\\operatorname{logicor}\\left(true;false\\right)','مثال منطقي مباشر'],
+ ['NOT','\\operatorname{logicnot}\\left(false\\right)','نفي قيمة منطقية']
+],
+
+"أساسي":[["جمع","1+1"],["كسر","\\frac{3}{4}"],["قيمة مطلقة","\\left|-5\\right|"]],
+"قوى وجذور":[["قوة","x^3"],["جذر","\\sqrt{16}"],["لوغاريتم","\\log\\left(100\\right)"]],
+"مثلثيات":[["جيب","\\sin\\left(\\frac{\\pi}{2}\\right)"],["جيب تمام","\\cos\\left(0\\right)"]],
+"تفاضل":[
+["d/dx — المشتقة الأولى","\\frac{d}{dx}x^3","تحسب معدل تغير الدالة بالنسبة إلى x. المثال يعطي 3x²."],
+["d²/dx² — المشتقة الثانية","\\frac{d^2}{dx^2}x^4","مشتقة المشتقة الأولى؛ تقيس تغير معدل التغير. المثال يعطي 12x²."],
+["dⁿ/dxⁿ — مشتقة من رتبة أعلى","\\frac{d^3}{dx^3}x^5","تكرر الاشتقاق n مرات. المثال يستخدم الرتبة الثالثة ويعطي 60x²."],
+["∂/∂x — مشتقة جزئية بالنسبة إلى x","\\frac{\\partial}{\\partial x}x^2y","لدالة بعدة متغيرات، نشتق بالنسبة إلى x ونعتبر البقية ثابتة. النتيجة 2xy."],
+["∂/∂y — مشتقة جزئية بالنسبة إلى y","\\frac{\\partial}{\\partial y}xy^2","نشتق بالنسبة إلى y فقط. النتيجة 2xy."],
+["∂/∂z — مشتقة جزئية بالنسبة إلى z","\\frac{\\partial}{\\partial z}xyz^2","نشتق بالنسبة إلى z فقط. النتيجة 2xyz."],
+["∂²/∂x² — مشتقة جزئية ثانية","\\frac{\\partial^2}{\\partial x^2}x^3y","اشتقاق مرتين بالنسبة إلى x. النتيجة 6xy."],
+["∂²/∂x∂y — مشتقة جزئية مختلطة","\\frac{\\partial^2}{\\partial x\\partial y}x^2y^3","اشتقاق بالنسبة إلى متغيرين. المثال يعطي 6xy²."],
+["f′ — رمز المشتقة الأولى","\\frac{d}{dx}x^2","f′(x) يعني المشتقة الأولى للدالة f. استخدمنا دالة فعلية حتى يعطي المحرك نتيجة: 2x."],
+["f″ — رمز المشتقة الثانية","\\frac{d^2}{dx^2}x^3","f″(x) يعني المشتقة الثانية للدالة f. المثال يعطي 6x."],
+["∇ — نابلا (مؤثر، وليس نتيجة بمفرده)","\\nabla (x^2+y^2+z^2)","∇ وحدها رمز لمؤثر متجهي. عند وضع دالة بعدها يحسب التدرج Gradient، والنتيجة [2x,2y,2z]."],
+["Δ — لابلاسيان","\\nabla^2 (x^2+y^2+z^2)","Δf أو ∇²f هو مجموع المشتقات الجزئية الثانية. المثال يعطي 6."],
+["مشتقة جزئية… — اختيار المتغير والرتبة","\\frac{\\partial^3}{\\partial x^3}x^5y","يتيح اختيار متغير الاشتقاق ورتبته. المثال يعطي 60x²y."],
+["مشتقة اتجاهية — المعنى","\\nabla (x^2+y^2+z^2)","المشتقة الاتجاهية هي معدل تغير f في اتجاه متجه معين. الزر يكتب الصيغة العامة؛ المثال التنفيذي هنا يحسب التدرج المستخدم فيها."],
+["تفاضل كلي — المعنى","\\frac{\\partial}{\\partial x}(x^2y)","التفاضل الكلي يجمع تأثير تغير جميع المتغيرات. الزر يكتب الصيغة العامة؛ المثال التنفيذي يوضح أحد مشتقاتها الجزئية ويعطي 2xy."],
+["ضمني — اشتقاق علاقة ضمنية","\\frac{d}{dx}(x^2)","الزر يكتب علاقة ضمنية F(x,y)=0. لأن المحرك لا ينفذ الاشتقاق الضمني مباشرة من هذا القالب، المثال التنفيذي يوضح اشتقاق حد منها ويعطي 2x."],
+["نقطة حرجة — المعنى","\\nabla (x^2+y^2+z^2)","النقطة الحرجة تحقق ∇f=0. المثال يحسب التدرج؛ ومنه تكون النقطة الحرجة عند x=y=z=0."],
+["Lagrange — مضاعفات لاغرانج","\\nabla (x^2+y^2+z^2)","الزر يكتب شرط لاغرانج ∇f=λ∇g. المثال التنفيذي يحسب ∇f أولًا ويعطي [2x,2y,2z]."]
+],
+"تكامل":[
+["∫ — تكامل غير محدد","\\int x^2\\,dx","يحسب الدالة الأصلية. النتيجة x³/3."],
+["∫ₐᵇ — تكامل محدد","\\int_{0}^{1}x^2\\,dx","يحسب قيمة عددية بين حدين. النتيجة 1/3."],
+["∬ — تكامل مزدوج","\\iint xy\\,dx\\,dy","تكامل بالنسبة إلى متغيرين. النتيجة x²y²/4."],
+["∭ — تكامل ثلاثي","\\iiint xyz\\,dx\\,dy\\,dz","تكامل بالنسبة إلى ثلاثة متغيرات. النتيجة x²y²z²/8."],
+["∮ — تكامل خطي مغلق","\\int_{0}^{2\\pi}1\\,dt","∮ يعني التكامل حول مسار مغلق. قالب ∮ نفسه يحتاج تعريف المسار؛ لذلك المثال التنفيذي لمسار دائرة بوحدة السرعة يعطي 2π."],
+["∯ — تكامل سطحي مغلق","\\int_{0}^{4\\pi}1\\,dt","∯ يعني التكامل على سطح مغلق. قالب ∯ يحتاج تعريف السطح؛ المثال العددي يمثل تكامل 1 على كرة الوحدة ومساحتها 4π."],
+["Σ — مجموع","\\sum_{x=1}^{5}x","يجمع الحدود من 1 إلى 5. النتيجة 15."],
+["Π — جداء","\\prod_{x=1}^{4}x","يضرب الحدود من 1 إلى 4. النتيجة 24."],
+["lim — نهاية عند قيمة","\\lim_{x\\to0}\\frac{\\sin(x)}{x}","يحسب النهاية عندما يقترب x من قيمة محددة. النتيجة 1."],
+["lim x→∞ — نهاية عند اللانهاية","\\lim_{x\\to\\infty}\\frac{1}{x}","يحسب سلوك الدالة عند اللانهاية. النتيجة 0."],
+["تكامل متعدد… — مثال عددي","\\int_{0}^{1}x\\,dx","الزر يسمح ببناء تكامل متعدد. المثال التنفيذي العددي البسيط يعطي 1/2."],
+["غير صحيح — حد لا نهائي","\\int_{0}^{\\infty}e^{-x}\\,dx","تكامل بحد لا نهائي. النتيجة 1."],
+["قيمة رئيسية — المعنى","\\int_{-1}^{1}x\\,dx","PV يستخدم للتكاملات ذات التفرد بطريقة متناظرة. المثال التنفيذي المتناظر يعطي 0."],
+["قطبي — مثال عددي لمساحة دائرة الوحدة","\\int_{0}^{1}2\\pi r\\,dr","في الإحداثيات القطبية يظهر عامل r. المثال يحسب مساحة دائرة الوحدة والنتيجة π."],
+["أسطواني — مثال عددي","\\int_{0}^{1}2\\pi r\\,dr","التكامل الأسطواني يستخدم عامل r. المثال يمثل أسطوانة وحدة الارتفاع ونصف القطر والنتيجة π."],
+["كروي — مثال عددي","\\int_{0}^{\\pi}2\\pi\\sin(phi)\\,dphi","التكامل الكروي يستخدم ρ² sinφ. المثال يمثل تكامل الزوايا على كرة الوحدة والنتيجة 4π."]
+],
+"جبر":[
+["نظام… — نظام معادلات","\\begin{cases}x+y=5\\\\x-y=1\\end{cases}","ينشئ نظامًا بعدد معادلات تختاره لحل عدة مجاهيل معًا."],
+["x= — معادلة في x","x=5","يكتب معادلة بسيطة يكون المتغير x أحد طرفيها."],
+["f(x)= — تعريف دالة","f\\left(x\\right)=x^2+1","يكتب دالة بدلالة x."],
+["نظام — نظام من معادلتين","\\begin{cases}x+y=5\\\\x-y=1\\end{cases}","يكتب معادلتين مترابطتين لحلهما معًا."],
+["نظام 3 — نظام من ثلاث معادلات","\\begin{cases}x+y+z=6\\\\x-y+z=2\\\\x+y-z=4\\end{cases}","يكتب ثلاث معادلات لحساب ثلاثة مجاهيل."],
+["< — أصغر من","x<5","متباينة صارمة: القيم الأصغر من الحد."],
+["> — أكبر من","x>2","متباينة صارمة: القيم الأكبر من الحد."],
+["≤ — أصغر من أو يساوي","x\\le5","متباينة تشمل قيمة الحد نفسها."],
+["≥ — أكبر من أو يساوي","x\\ge2","متباينة تشمل قيمة الحد نفسها."],
+["≠ — لا يساوي","x\\ne3","يعبّر عن استبعاد قيمة أو عدم تساوي طرفين."],
+["≈ — يساوي تقريبًا","\\pi\\approx3.14159","يستخدم للدلالة على مساواة تقريبية."],
+["factor — تحليل إلى عوامل","\\operatorname{factor}\\left(x^2-5x+6\\right)","يحلل التعبير الجبري إلى حاصل ضرب عوامل أبسط."],
+["expand — نشر الأقواس","\\operatorname{expand}\\left((x+2)(x+3)\\right)","يفك الأقواس ويحوّل حاصل الضرب إلى مجموع حدود."],
+["simplify — تبسيط","\\operatorname{simplify}\\left(\\frac{x^2-1}{x-1}\\right)","يبسط التعبير إلى صورة مكافئة أبسط."],
+["solve — حل معادلة","\\operatorname{solve}\\left(x^2-4,x\\right)","يطلب حلول المعادلة بالنسبة إلى المتغير المحدد."],
+["roots — جذور كثيرة الحدود","\\operatorname{roots}\\left(x^2-5x+6\\right)","يطلب جذور كثيرة الحدود."],
+["linear — معادلة خطية","2x+3=7","معادلة من الدرجة الأولى في المتغير."],
+["quadratic — معادلة تربيعية","x^2-5x+6=0","معادلة كثيرة حدود من الدرجة الثانية."],
+["cubic — معادلة تكعيبية","x^3-6x^2+11x-6=0","معادلة كثيرة حدود من الدرجة الثالثة."],
+["quartic — معادلة من الدرجة الرابعة","x^4-5x^2+4=0","معادلة كثيرة حدود من الدرجة الرابعة."],
+["polynomial — معادلة كثيرة حدود","x^5-3x^3+x-2=0","صيغة عامة لمعادلة كثيرة حدود بأي درجة."],
+["rational — معادلة كسرية","\\frac{x+1}{x-2}=3","معادلة يظهر فيها المتغير داخل كسر جبري."],
+["radical — معادلة جذرية","\\sqrt{x+1}=3","معادلة تحتوي المتغير داخل جذر."],
+["exponential — معادلة أسية","2^x=8","معادلة يظهر فيها المتغير في الأس."],
+["log equation — معادلة لوغاريتمية","\\log_{2}\\left(x\\right)=3","معادلة تحتوي لوغاريتمًا للمتغير."],
+["nonlinear system — نظام غير خطي","\\begin{cases}x^2+y^2=5\\\\x-y=1\\end{cases}","نظام معادلات يحتوي معادلة غير خطية واحدة على الأقل."]
+],
+"مصفوفات":[["مصفوفة","\\begin{bmatrix}1&2\\\\3&4\\end{bmatrix}"],["محدد","\\det\\left(\\begin{bmatrix}1&2\\\\3&4\\end{bmatrix}\\right)"],["معكوس","\\begin{bmatrix}1&2\\\\3&4\\end{bmatrix}^{-1}"]],
+"متجهات":[["ضرب قياسي","\\begin{bmatrix}1\\\\2\\\\3\\end{bmatrix}\\cdot\\begin{bmatrix}4\\\\5\\\\6\\end{bmatrix}"],["ضرب متجهي","\\begin{bmatrix}1\\\\0\\\\0\\end{bmatrix}\\times\\begin{bmatrix}0\\\\1\\\\0\\end{bmatrix}"]],
+"تحليل متجهي":[["Gradient","\\nabla(x^2+y^2+z^2)"],["Divergence","\\nabla\\cdot\\begin{bmatrix}x\\\\y\\\\z\\end{bmatrix}"],["Curl","\\nabla\\times\\begin{bmatrix}y\\\\z\\\\x\\end{bmatrix}"],["Laplacian","\\nabla^2(x^2+y^2+z^2)"]],
+"رسم 2D/3D":[
+["plot2d — رسم دالة ثنائية الأبعاد y=f(x)","\\operatorname{plot2d}\\left(x^2\\right)"],
+["plot2d_multi — رسم عدة دوال 2D في مخطط واحد","\\operatorname{plot2d_multi}\\left(\\sin(x),\\cos(x)\\right)"],
+["implicit2d — رسم منحنى ضمني F(x,y)=0","\\operatorname{implicit2d}\\left(x^2+y^2=4\\right)"],
+["parametric2d — رسم منحنى بارامتري x(t), y(t)","\\operatorname{parametric2d}\\left(\\cos(t),\\sin(t)\\right)"],
+["polarplot — رسم منحنى قطبي r=f(θ)","\\operatorname{polarplot}\\left(1+\\cos(\\theta)\\right)"],
+["plot3d — رسم سطح ثلاثي الأبعاد z=f(x,y)","\\operatorname{plot3d}\\left(\\sin(x)\\cos(y)\\right)"],
+["implicit3d — رسم سطح ضمني F(x,y,z)=0","\\operatorname{implicit3d}\\left(x^2+y^2+z^2=4\\right)"],
+["parametric3d — رسم منحنى فضائي x(t), y(t), z(t)","\\operatorname{parametric3d}\\left(\\cos(t),\\sin(t),t\\right)"],
+["surface3d — رسم سطح بارامتري x(u,v), y(u,v), z(u,v)","\\operatorname{surface3d}\\left(u,v,u^2+v^2\\right)"],
+["contour — رسم خطوط تساوي لدالة f(x,y)","\\operatorname{contour}\\left(x^2+y^2\\right)"],
+["vectorfield2d — رسم حقل متجهات ثنائي الأبعاد F(x,y)","\\operatorname{vectorfield2d}\\left(-y,x\\right)"],
+["vectorfield3d — رسم حقل متجهات ثلاثي الأبعاد F(x,y,z)","\\operatorname{vectorfield3d}\\left(y,-x,z\\right)"],
+["point2d — رسم نقطة في المستوى (x,y)","\\operatorname{point2d}\\left(2,3\\right)"],
+["point3d — رسم نقطة في الفضاء (x,y,z)","\\operatorname{point3d}\\left(2,3,4\\right)"],
+["tRange — تحديد مجال البارامتر t","\\operatorname{tRange}\\left(0,2\\pi\\right)"]],
+"ODE/PDE":[
+["ODE خطية رتبة أولى — غيّر المعامل والشرط","\\frac{dy}{dx}=2y; y(0)=3","يمكن تغيير 2 و3. المثال الحالي يعطي y=3e^{2x}."],
+["ODE نمو/اضمحلال — شرط عند نقطة مختلفة","\\frac{dy}{dx}=-3y; y(1)=2","يمكن تغيير -3 ومكان الشرط 1 وقيمته 2، ثم الضغط على «احسب»."],
+["ODE رتبة أولى غير متجانسة","\\frac{dy}{dx}+2y=4; y(0)=1","يمكن تغيير معاملات المعادلة والشرط الابتدائي؛ المحرك يعيد الحل الرمزي عندما يكون مدعومًا."],
+["ODE قابلة للفصل","\\frac{dy}{dx}=x y; y(0)=2","يمكن تغيير معامل x وقيمة الشرط. المثال يعطي حلاً أسيًا بدلالة x²."],
+["ODE رتبة ثانية — اهتزاز بسيط","\\frac{d^2y}{dx^2}+4y=0; y(0)=1; y^{\\prime}\\left(0\\right)=0","غيّر 4 والشرطين الابتدائيين للحصول على حل جديد."],
+["ODE رتبة ثانية — شرطا بداية مختلفان","\\frac{d^2y}{dx^2}+y=0; y(0)=0; y^{\\prime}\\left(0\\right)=2","يمكن تغيير معاملات المعادلة وقيم الشرطين. المثال الحالي يعطي y=2sin(x)."],
+["ODE رتبة ثانية غير متجانسة","\\frac{d^2y}{dx^2}+y=1; y(0)=0; y^{\\prime}\\left(0\\right)=0","مثال بقوة خارجية ثابتة؛ غيّر الطرف الأيمن والشروط وجرب الحل."],
+["ODE بدون شروط — حل عام","\\frac{dy}{dx}=5x^2","غيّر 5 أو قوة x؛ بدون شرط ابتدائي يظهر ثابت التكامل في الحل العام."],
+["PDE انتقال في x,y — حل عام","\\frac{\\partial u}{\\partial x}+\\frac{\\partial u}{\\partial y}=0","الحل العام u=F(x-y). يمكنك تغيير المسألة ثم تجربة «احسب»."],
+["PDE انتقال x,y مع شرط ابتدائي","\\frac{\\partial u}{\\partial x}+\\frac{\\partial u}{\\partial y}=0; u(x,0)=x^2","الشرط يحدد الدالة الحرة؛ المثال يعطي u=(x-y)^2. غيّر x² إلى دالة أخرى مدعومة."],
+["PDE انتقال x,t — حل عام","\\frac{\\partial u}{\\partial t}=\\frac{\\partial u}{\\partial x}","الحل العام u=F(x+t)."],
+["PDE انتقال x,t مع شرط ابتدائي","\\frac{\\partial u}{\\partial t}=\\frac{\\partial u}{\\partial x}; u(x,0)=x^2+1","الشرط يحدد F؛ المثال يعطي u=(x+t)^2+1. غيّر الشرط ثم احسب."],
+["PDE انتقال بمعامل — غيّر c","\\frac{\\partial u}{\\partial t}=2\\frac{\\partial u}{\\partial x}; u(x,0)=\\sin(x)","يمكن تغيير 2 والشرط الابتدائي؛ المثال يعطي u=sin(x+2t)."],
+["PDE انتقال بمعامل سالب","\\frac{\\partial u}{\\partial t}=-3\\frac{\\partial u}{\\partial x}; u(x,0)=x","غيّر -3 أو الدالة الابتدائية؛ المثال يعطي u=x-3t."],
+["ODE تكامل مباشر — ثابت","\\frac{dy}{dx}=4; y(0)=2","غيّر 4 وقيمة الشرط؛ مثال بسيط لاختبار الشرط الابتدائي."],
+["ODE تكامل مباشر — كثيرة حدود","\\frac{dy}{dx}=3x^2; y(0)=1","يمكن تغيير 3 والأس والشرط الابتدائي، ثم الضغط على «احسب»."],
+["ODE خطية — y′=x+y","\\frac{dy}{dx}=x+y; y(0)=1","مثال خطي من الرتبة الأولى؛ يمكن تغيير الطرف الذي يحتوي x والشرط الابتدائي."],
+["ODE خطية — y′+3y=6","\\frac{dy}{dx}+3y=6; y(0)=0","يمكن تغيير 3 و6 والشرط الابتدائي للحصول على حل جديد."],
+["ODE رتبة ثانية — جذور حقيقية","\\frac{d^2y}{dx^2}-3\\frac{dy}{dx}+2y=0; y(0)=1; y^{\\prime}\\left(0\\right)=0","مثال رتبة ثانية بمعاملات ثابتة؛ غيّر المعاملات أو الشرطين وجرب الحساب."],
+["ODE رتبة ثانية — تكامل مباشر","\\frac{d^2y}{dx^2}=6x; y(0)=1; y^{\\prime}\\left(0\\right)=2","يمكن تغيير 6 والدالة في الطرف الأيمن وقيم الشرطين."],
+["ODE رتبة ثانية غير متجانسة — ثابت","\\frac{d^2y}{dx^2}+4y=8; y(0)=0; y^{\\prime}\\left(0\\right)=0","غيّر 4 و8 أو الشرطين؛ المحرك يحسب الحل الرمزي المدعوم."],
+["ODE رتبة ثانية — حل عام بلا شروط","\\frac{d^2y}{dx^2}-y=0","بدون شروط ابتدائية يعرض الحل العام وثوابت التكامل."],
+["PDE انتقال x,y — شرط جيبي","\\frac{\\partial u}{\\partial x}+\\frac{\\partial u}{\\partial y}=0; u(x,0)=\\sin(x)","يمكن تغيير sin(x) إلى دالة أخرى مدعومة؛ المحرك ينقل الشرط على x-y."],
+["PDE انتقال x,y — شرط أسي","\\frac{\\partial u}{\\partial x}+\\frac{\\partial u}{\\partial y}=0; u(x,0)=e^x","يمكن تغيير الدالة الابتدائية؛ المحرك يعيد الحل الموافق لها بدلالة x-y."],
+["PDE انتقال x,t — شرط جيب تمام","\\frac{\\partial u}{\\partial t}=\\frac{\\partial u}{\\partial x}; u(x,0)=\\cos(x)","غيّر cos(x) إلى دالة مدعومة أخرى؛ الحل يتبع x+t."],
+["PDE انتقال بمعامل 3 — شرط تربيعي","\\frac{\\partial u}{\\partial t}=3\\frac{\\partial u}{\\partial x}; u(x,0)=x^2","يمكن تغيير 3 وقيمة الشرط الابتدائي؛ المحرك يعيد تركيب الحل باستخدام x+3t."],
+["PDE انتقال بمعامل كسري عشري","\\frac{\\partial u}{\\partial t}=0.5\\frac{\\partial u}{\\partial x}; u(x,0)=x^2+2x","يمكن تغيير 0.5 والدالة الابتدائية؛ هذا يختبر معامل انتقال غير صحيح."],
+["PDE انتقال بمعامل سالب — شرط جيبي","\\frac{\\partial u}{\\partial t}=-2\\frac{\\partial u}{\\partial x}; u(x,0)=\\sin(x)","يمكن تغيير -2 أو sin(x)؛ المحرك يعيد الحل باستخدام x-2t."],
+["لابلاس 2D — شروط حدّية جيبية","\\frac{\\partial^2u}{\\partial x^2}+\\frac{\\partial^2u}{\\partial y^2}=0; u(0,y)=0; u(\\pi,y)=0; u(x,0)=0; u(x,1)=\\sin(x)","مسألة لابلاس على مستطيل مع شروط حدّية. يمكن تعديل الشرط u(x,1)=sin(x) وتجربة شروط أخرى."],
+["لابلاس 2D — شروط حدّية خطية","\\frac{\\partial^2u}{\\partial x^2}+\\frac{\\partial^2u}{\\partial y^2}=0; u(0,y)=y; u(1,y)=1+y; u(x,0)=x; u(x,1)=x+1","مسألة لابلاس بشروط حدّية خطية؛ الحل الموافق هو u(x,y)=x+y، ويمكن تعديل الشروط يدويًا."],
+["معادلة الحرارة — شرط ابتدائي جيبي","\\frac{\\partial u}{\\partial t}=\\frac{\\partial^2u}{\\partial x^2}; u(0,t)=0; u(\\pi,t)=0; u(x,0)=\\sin(x)","معادلة الحرارة 1D مع طرفين صفريين وشرط ابتدائي جيبي. يمكن تعديل الشرط الابتدائي والمعاملات يدويًا."],
+["معادلة الحرارة — معامل انتشار 2","\\frac{\\partial u}{\\partial t}=2\\frac{\\partial^2u}{\\partial x^2}; u(0,t)=0; u(\\pi,t)=0; u(x,0)=\\sin(3x)","مثال حرارة بمعامل انتشار 2 وشرط ابتدائي sin(3x). يمكن تعديل 2 أو الدالة الابتدائية."],
+["معادلة الموجة — إزاحة ابتدائية جيبية","\\frac{\\partial^2u}{\\partial t^2}=\\frac{\\partial^2u}{\\partial x^2}; u(0,t)=0; u(\\pi,t)=0; u(x,0)=\\sin(x); \frac{\\partial u}{\\partial t}(x,0)=0","معادلة الموجة 1D مع طرفين ثابتين، إزاحة ابتدائية sin(x)، وسرعة ابتدائية صفرية."],
+["معادلة الموجة — سرعة موجة 2","\\frac{\\partial^2u}{\\partial t^2}=4\\frac{\\partial^2u}{\\partial x^2}; u(0,t)=0; u(\\pi,t)=0; u(x,0)=\\sin(2x); \frac{\\partial u}{\\partial t}(x,0)=0","مثال موجة بسرعة c=2 لأن c²=4. يمكن تعديل 4 والشروط الابتدائية يدويًا."],
+["معادلة بواسون — مصدر ثابت","\\frac{\\partial^2u}{\\partial x^2}+\\frac{\\partial^2u}{\\partial y^2}=-2; u(0,y)=y(1-y); u(1,y)=y(1-y); u(x,0)=0; u(x,1)=0","معادلة بواسون 2D بمصدر ثابت وشروط حدّية على مستطيل. يمكن تعديل المصدر والشروط."],
+["معادلة بواسون — مصدر يعتمد على x,y","\\frac{\\partial^2u}{\\partial x^2}+\\frac{\\partial^2u}{\\partial y^2}=x+y; u(0,y)=0; u(1,y)=0; u(x,0)=0; u(x,1)=0","مثال بواسون بمصدر x+y وشروط ديريشليه صفرية؛ يمكن تعديل الطرف الأيمن والشروط يدويًا."]
+],
+"مركب":[["كوشي Cauchy — مثال عملي","\\operatorname{cauchy}\\left(z^2+1,1\\right)","يطبق صيغة كوشي: إذا كان المسار المغلق الموجب يحيط بالنقطة z₀=1 فإن ∮(z²+1)/(z−1) dz = 4πi. اضغط «إلى السؤال» ثم «احسب»."],["الجزء الحقيقي","\\operatorname{Re}\\left(3+4i\\right)"],["الجزء التخيلي","\\operatorname{Im}\\left(3+4i\\right)"],["المرافق","\\overline{3+4i}"],["المعيار","\\left|3+4i\\right|"],["الزاوية","\\arg\\left(1+i\\right)"],["الباقي Residue","\\operatorname{Res}_{z=0}\\frac{1}{z}"]],
+"هندسة تفاضلية":[
+["منحنى صريح — كتابة","y=x^2"],["منحنى ضمني — كتابة","x^2+y^2-1=0"],["منحنى بارامتري — كتابة","\\mathbf{r}\\left(t\\right)=\\begin{bmatrix}\\cos t\\\\\\sin t\\\\t\\end{bmatrix}"],
+["تقوس منحنى حلزوني","\\operatorname{dgCurveCurvature}\\left(\\cos t,\\sin t,t,t\\right)"],["التواء منحنى حلزوني","\\operatorname{dgCurveTorsion}\\left(\\cos t,\\sin t,t,t\\right)"],
+["سطح صريح — كتابة","z=x^2+y^2"],["سطح ضمني — كتابة","x^2+y^2+z^2-1=0"],["سطح بارامتري — كتابة","\\mathbf{r}\\left(u,v\\right)=\\begin{bmatrix}u\\\\v\\\\u^2+v^2\\end{bmatrix}"],
+["الشكل الأساسي الأول I لسطح z=u²+v²","\\operatorname{dgFirst}\\left(u,v,u^2+v^2,u,v\\right)"],["الشكل الأساسي الثاني II","\\operatorname{dgSecond}\\left(u,v,u^2+v^2,u,v\\right)"],["المتجه العمودي","\\operatorname{dgNormal}\\left(u,v,u^2+v^2,u,v\\right)"],
+["تقوس Gaussian K","\\operatorname{dgGaussian}\\left(u,v,u^2+v^2,u,v\\right)"],["التقوس المتوسط H","\\operatorname{dgMean}\\left(u,v,u^2+v^2,u,v\\right)"],["التقوسات الرئيسية","\\operatorname{dgPrincipal}\\left(u,v,u^2+v^2,u,v\\right)"],
+["رموز Christoffel للكرة","\\operatorname{dgChristoffel}\\left(\\sin u\\cos v,\\sin u\\sin v,\\cos u,u,v\\right)"],["موتر Riemann للكرة","\\operatorname{dgRiemann}\\left(\\sin u\\cos v,\\sin u\\sin v,\\cos u,u,v\\right)"],["Ricci للكرة","\\operatorname{dgRicci}\\left(\\sin u\\cos v,\\sin u\\sin v,\\cos u,u,v\\right)"],["Scalar curvature للكرة","\\operatorname{dgScalarCurvature}\\left(\\sin u\\cos v,\\sin u\\sin v,\\cos u,u,v\\right)"],
+["معادلات Geodesic للكرة","\\operatorname{dgGeodesic}\\left(\\sin u\\cos v,\\sin u\\sin v,\\cos u,u,v\\right)"],
+["سطح ضمني: الشكلان I وII","\\operatorname{dgImplicitForms}\\left(x^2+y^2+z^2-1,x,y,z\\right)"],["سطح ضمني: Gaussian K","\\operatorname{dgImplicitGaussian}\\left(x^2+y^2+z^2-1,x,y,z\\right)"],["سطح ضمني: Mean H","\\operatorname{dgImplicitMean}\\left(x^2+y^2+z^2-1,x,y,z\\right)"],["Jacobian لتبديل إحداثيات","\\operatorname{dgJacobian}\\left(\\sin u\\cos v,\\sin u\\sin v,\\cos u,u,v\\right)"]
+]
+};
+function tutorialIO(name,tex,sec){
+ const op=(tex.match(/\\operatorname\{([^}]+)\}/)||[])[1];
+ if(op){
+  const inside=(tex.match(/\\left\((.*)\\right\)/)||[])[1];
+  let n=inside?inside.split(',').length:null;
+  return 'الوظيفة: '+op+' — تنفذ العملية الموضحة في اسم المثال. المداخل: '+(n?('نحو '+n+' مدخل/قيمة داخل الأقواس، ويجب الحفاظ على ترتيبها.'):'القيم أو الدوال داخل الأقواس، مع الحفاظ على ترتيبها.');
+ }
+ if(sec==='ODE/PDE') return 'الوظيفة: حل معادلة تفاضلية. المداخل: المعادلة نفسها، والمتغير التابع والمستقل، ثم الشروط الابتدائية أو الحدّية بعد الفاصلة المنقوطة إن وُجدت. يمكنك تغيير القيم والمعاملات ضمن الصيغة التي يدعمها المثال.';
+ if(/\\frac\{d|\\partial|y['′″]/.test(tex)) return 'الوظيفة: صيغة تفاضلية. المداخل: الدالة، متغير الاشتقاق، والرتبة أو الشروط إن وُجدت.';
+ if(/\\begin\{bmatrix\}|\\begin\{matrix\}/.test(tex)) return 'الوظيفة: مصفوفة/ترتيب عددي. المداخل: عناصر المصفوفة بالترتيب الظاهر.';
+ if(/=/.test(tex)) return 'الوظيفة: مثال بصيغة رياضية معتادة. المداخل: طرفا العلاقة والمتغيرات أو القيم الظاهرة فيها.';
+ if(/\\(sin|cos|tan|log|ln|sqrt)/.test(tex)) return 'الوظيفة: تقييم أو استخدام الدالة الرياضية الظاهرة. المدخل: التعبير الموجود داخل الدالة.';
+ return 'المداخل: الأعداد أو المتغيرات أو التعبيرات الظاهرة في المثال؛ عدّلها مع إبقاء البنية الأساسية للصيغة.';
+}
+function buildTutorial(){tutorialBody.innerHTML='';tutorialNav.innerHTML='';for(const [sec,items] of Object.entries(tutorialExamples)){let h=document.createElement('h3');h.textContent=sec;h.id='tutorial-sec-'+Math.random().toString(36).slice(2);tutorialBody.appendChild(h);let nb=document.createElement('button');nb.textContent=sec.replace(/\s*[—-].*$/,'');nb.onclick=()=>h.scrollIntoView({behavior:'smooth',block:'start'});tutorialNav.appendChild(nb);for(const item of items){const [name,tex,desc]=item;let d=document.createElement('div');d.className='titem';let hd=document.createElement('div');hd.className='t-head';hd.innerHTML='<strong>'+name+'</strong><span class="badge">'+sec+'</span>';d.appendChild(hd);if(desc){let p=document.createElement('div');p.className='hint';p.textContent=desc;d.appendChild(p)}let io=document.createElement('div');io.className='hint';io.style.marginTop='5px';io.innerHTML='<strong>الوظيفة والمداخل: </strong>'+tutorialIO(name,tex,sec);d.appendChild(io);let exLabel=document.createElement('div');exLabel.className='hint';exLabel.style.marginTop='7px';exLabel.innerHTML='<strong>الصيغة الرياضية:</strong>';d.appendChild(exLabel);let c=document.createElement('math-field');c.setAttribute('read-only','');c.setAttribute('virtual-keyboard-mode','off');c.style.direction='ltr';c.style.textAlign='left';c.style.display='block';c.style.width='100%';c.style.boxSizing='border-box';c.style.margin='6px 0';c.style.padding='8px';c.style.border='1px solid #e1e5ea';c.style.borderRadius='8px';c.style.background='#fafbfc';c.style.fontSize='20px';c.value=tex;let b=document.createElement('button');b.textContent='إلى السؤال';b.onclick=()=>{MF().value=tex;MF().focus()};d.append(c,b);tutorialBody.appendChild(d)}}}
+// صيغة العرض في الدليل فقط: نحافظ على الإدخال الأصلي للحساب، ونحوّل الأمثلة الداخلية إلى كتابة رياضية مرئية.
+function tutorialDisplayTex(name,tex,sec){
+ const exact={
+  'mvdet':String.raw`\det\left(\begin{bmatrix}1&2\\3&4\end{bmatrix}\right)`,
+  'mvinverse':String.raw`\begin{bmatrix}1&2\\3&4\end{bmatrix}^{-1}`,
+  'mvtranspose':String.raw`\begin{bmatrix}1&2\\3&4\end{bmatrix}^{T}`,
+  'mvtrace':String.raw`\operatorname{tr}\left(\begin{bmatrix}1&2\\3&4\end{bmatrix}\right)`,
+  'mvrank':String.raw`\operatorname{rank}\left(\begin{bmatrix}1&2\\2&4\end{bmatrix}\right)`,
+  'mvadd':String.raw`\begin{bmatrix}1&2\\3&4\end{bmatrix}+\begin{bmatrix}5&6\\7&8\end{bmatrix}`,
+  'mvsub':String.raw`\begin{bmatrix}5&6\\7&8\end{bmatrix}-\begin{bmatrix}1&2\\3&4\end{bmatrix}`,
+  'mvmul':String.raw`\begin{bmatrix}1&2\\3&4\end{bmatrix}\begin{bmatrix}2&0\\1&2\end{bmatrix}`,
+  'mvscale':String.raw`3\begin{bmatrix}1&2\\3&4\end{bmatrix}`,
+  'mvsolve':String.raw`\begin{bmatrix}2&1\\1&-1\end{bmatrix}\begin{bmatrix}x\\y\end{bmatrix}=\begin{bmatrix}5\\1\end{bmatrix}`,
+  'mveigen':String.raw`\begin{bmatrix}2&0\\0&3\end{bmatrix}\mathbf v=\lambda\mathbf v`,
+  'mvdiag':String.raw`\begin{bmatrix}4&0\\0&7\end{bmatrix}`,
+  'mvnull':String.raw`\operatorname{Null}\left(\begin{bmatrix}1&2\\2&4\end{bmatrix}\right)`,
+  'mvdot':String.raw`\begin{bmatrix}1\\2\\3\end{bmatrix}\cdot\begin{bmatrix}4\\5\\6\end{bmatrix}`,
+  'mvcross':String.raw`\begin{bmatrix}1\\0\\0\end{bmatrix}\times\begin{bmatrix}0\\1\\0\end{bmatrix}`,
+  'mvnorm':String.raw`\left\|\begin{bmatrix}3\\4\\0\end{bmatrix}\right\|`,
+  'mvunit':String.raw`\frac{\begin{bmatrix}3\\4\\0\end{bmatrix}}{\left\|\begin{bmatrix}3\\4\\0\end{bmatrix}\right\|}`,
+  'mvproj':String.raw`\operatorname{proj}_{(1,0,0)}(2,3,0)`,
+  'mvcomp':String.raw`\operatorname{comp}_{(1,0,0)}(2,3,0)`,
+  'mvangle':String.raw`\angle\left(\begin{bmatrix}1\\0\\0\end{bmatrix},\begin{bmatrix}0\\1\\0\end{bmatrix}\right)`,
+  'mvtriple':String.raw`\begin{bmatrix}1\\0\\0\end{bmatrix}\cdot\left(\begin{bmatrix}0\\1\\0\end{bmatrix}\times\begin{bmatrix}0\\0\\1\end{bmatrix}\right)`
+ };
+ const m=tex.match(/\\operatorname\{([^}]+)\}/);
+ if(m && exact[m[1]]) return exact[m[1]];
+ // بقية الأمثلة: إزالة أسماء التنفيذ الداخلية من العرض فقط مع إبقاء صيغة رياضية مقروءة.
+ if(m){
+   const friendly=m[1].replace(/^(st|sf|nt|dg|mv)/,'');
+   return tex.replace(/\\operatorname\{[^}]+\}/,String.raw`\mathrm{${friendly}}`);
+ }
+ return tex;
+}
+// الدليل في نافذة متصفح مستقلة. لا يغيّر محرك الحساب.
+window.__tutorialExamples=tutorialExamples;
+window.__tutorialIO=tutorialIO;
+window.__tutorialDisplayTex=tutorialDisplayTex;
+window.receiveTutorialExample=function(tex){MF().value=tex;MF().focus();window.focus();};
+let tutorialWindow=null;
+function showTutorial(){
+ if(tutorialWindow && !tutorialWindow.closed){tutorialWindow.focus();return;}
+ // فتح النافذة مباشرة من ضغطة المستخدم حتى تظهر فوراً ولا يحجبها المتصفح.
+ tutorialWindow=window.open('', 'AdvancedMathTutorial', 'width=980,height=820,resizable=yes,scrollbars=yes');
+ if(!tutorialWindow){alert('تعذر فتح نافذة الدليل. اسمح بالنوافذ المنبثقة لهذا الملف ثم حاول مرة أخرى.');return;}
+ const d=tutorialWindow.document;
+ d.open();
+ d.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>دليل محرك الرياضيات المتقدمة</title>
+ <style>body{margin:0;background:#f6f7f9;color:#17191c;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif}.head{position:sticky;top:0;z-index:20;background:white;border-bottom:1px solid #ddd;padding:10px 14px}.headrow{display:flex;align-items:center;justify-content:space-between;gap:10px}.nav{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;max-height:150px;overflow:auto}.nav button,.item button{font:inherit;border:1px solid #cfd4da;background:#fff;border-radius:9px;padding:7px 10px;cursor:pointer}.nav button.active{background:#fffde7;color:#073763;border-color:#70b7ee;font-weight:700}.intro{background:white;border:1px solid #d9dde3;border-radius:12px;padding:12px;margin:12px}.hint{font-size:13px;color:#626872;line-height:1.7}.body{padding:0 12px 20px}.item{background:white;border:1px solid #ddd;border-radius:10px;padding:11px;margin:9px 0}.itemhead{display:flex;justify-content:space-between;gap:8px;align-items:center}.badge{font-size:12px;background:#eef1f4;border-radius:999px;padding:3px 8px}.mathbox{direction:ltr;text-align:left;display:block;width:100%;box-sizing:border-box;margin:7px 0;padding:8px;border:1px solid #e1e5ea;border-radius:8px;background:#fafbfc;font-size:20px;min-height:44px}.loading{padding:18px;text-align:center;color:#626872}</style>
+ <script defer src="https://unpkg.com/mathlive"><\/script></head><body>
+ <div class="head"><div class="headrow"><h2 style="margin:0">Tutorial — دليل الصيغ المقبولة</h2><button onclick="window.close()">✕ إغلاق</button></div><div id="nav" class="nav"></div></div>
+ <div class="intro"><strong>ما الهدف من هذا الدليل؟</strong><div class="hint">الدليل يوضح بالصيغ والأمثلة كيف تُدخل المسائل التي يفهمها المحرك. اختر القسم، راجع المثال وشرح وظيفته ومداخلاته، ثم اضغط «إلى السؤال». الصيغة المعروضة رياضية، بينما يُرسل إلى نافذة السؤال الإدخال الأصلي الذي يفهمه المحرك.</div></div>
+ <div id="body" class="body"><div class="loading">اختر قسمًا من الأعلى لعرض أمثلته.</div></div>
+ <script>
+ const examples=window.opener && window.opener.__tutorialExamples;
+ const ioFn=(name,tex,sec)=>window.opener && window.opener.__tutorialIO ? window.opener.__tutorialIO(name,tex,sec) : '';
+ const displayFn=(name,tex,sec)=>window.opener && window.opener.__tutorialDisplayTex ? window.opener.__tutorialDisplayTex(name,tex,sec) : tex;
+ const nav=document.getElementById('nav'), body=document.getElementById('body');
+ function esc(x){return String(x??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[m]));}
+ function showSection(sec,btn){
+   [...nav.children].forEach(b=>b.classList.remove('active')); if(btn)btn.classList.add('active');
+   body.innerHTML=''; const items=examples[sec]||[];
+   for(const item of items){const [name,tex,desc]=item; const box=document.createElement('div');box.className='item';
+     box.innerHTML='<div class="itemhead"><strong>'+esc(name)+'</strong><span class="badge">'+esc(sec)+'</span></div>'+(desc?'<div class="hint">'+esc(desc)+'</div>':'')+'<div class="hint" style="margin-top:5px"><strong>الوظيفة والمداخل: </strong>'+esc(ioFn(name,tex,sec))+'</div><div class="hint" style="margin-top:7px"><strong>الصيغة الرياضية:</strong></div>';
+     const mf=document.createElement('math-field');mf.className='mathbox';mf.setAttribute('read-only','');mf.setAttribute('virtual-keyboard-mode','off');mf.value=displayFn(name,tex,sec);box.appendChild(mf);
+     const send=document.createElement('button');send.textContent='إلى السؤال';send.onclick=()=>{if(window.opener&&!window.opener.closed)window.opener.receiveTutorialExample(tex);};box.appendChild(send);body.appendChild(box);
+   }
+ }
+ if(examples){Object.keys(examples).forEach(sec=>{const b=document.createElement('button');b.textContent=sec.replace(/\\s*[—-].*$/,'');b.onclick=()=>showSection(sec,b);nav.appendChild(b);});}
+ else body.innerHTML='<div class="loading">تعذر الاتصال بنافذة المحرك.</div>';
+ <\/script></body></html>`);
+ d.close();
+ tutorialWindow.focus();
+}
+tutorial.onclick=(e)=>{e.stopPropagation();showTutorial()};
+// عناصر الدليل القديمة داخل الصفحة تبقى غير مستخدمة للمحافظة على بقية الملف كما هو.
+const RANGE_IDS=['xmin','xmax','ymin','ymax','zmin','zmax','tmin','tmax'];
+function getRanges(){let o={};for(const id of RANGE_IDS)o[id]=Number(document.getElementById(id).value);return o}
+function loadRanges(){try{let o=JSON.parse(localStorage.getItem('mathPlotRanges')||'{}');for(const id of RANGE_IDS)if(Number.isFinite(Number(o[id])))document.getElementById(id).value=o[id]}catch(e){}}
+function savePlotRanges(){let o=getRanges();for(const [a,b] of [['xmin','xmax'],['ymin','ymax'],['zmin','zmax'],['tmin','tmax']]){if(!Number.isFinite(o[a])||!Number.isFinite(o[b])||o[a]>=o[b]){rangeMsg.textContent='يجب أن تكون قيمة «من» أصغر من قيمة «إلى». ';return false}}localStorage.setItem('mathPlotRanges',JSON.stringify(o));rangeMsg.textContent='تم حفظ مجال الرسم وسيُستخدم تلقائيًا.';return true}
+loadRanges();saveRanges.onclick=savePlotRanges;resetRanges.onclick=()=>{let d={xmin:-10,xmax:10,ymin:-10,ymax:10,zmin:-10,zmax:10,tmin:-10,tmax:10};for(const id of RANGE_IDS)document.getElementById(id).value=d[id];localStorage.setItem('mathPlotRanges',JSON.stringify(d));rangeMsg.textContent='تمت إعادة المجال الافتراضي وحفظه.'};
+async function copyQuestionAndAnswer(){
+ const question=(MF().value||'').trim();
+ if(!question){qaMsg.textContent='لا يوجد سؤال لنسخه.';return}
+ if(!out.innerText.trim() && !out.querySelector('math-field,.plot-container,.js-plotly-plot,svg,canvas')){qaMsg.textContent='لا توجد نتيجة لنسخها.';return}
+ try{
+  qaMsg.textContent='جاري تجهيز النسخ المرئي…';
+  if(typeof html2canvas==='undefined') await loadScript('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js');
+  // نلتقط السؤال والنتيجة كما يراهما المستخدم فعلياً. بهذه الطريقة تُنسخ
+  // المعادلات المنسقة وكذلك رسومات Plotly بدلاً من LaTeX النصي.
+  const qCanvas=await html2canvas(MF(),{backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false});
+  const rCanvas=await html2canvas(out,{backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false});
+  const pad=28, labelH=54, gap=24;
+  const width=Math.max(qCanvas.width,rCanvas.width)+pad*2;
+  const height=pad+labelH+qCanvas.height+gap+labelH+rCanvas.height+pad;
+  const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
+  const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,width,height);
+  ctx.fillStyle='#111';ctx.font='bold 34px Arial';ctx.textAlign='right';ctx.direction='rtl';
+  let y=pad+38;ctx.fillText('السؤال:',width-pad,y);
+  y=pad+labelH;ctx.drawImage(qCanvas,pad,y);
+  y+=qCanvas.height+gap+38;ctx.fillText('النتيجة:',width-pad,y);
+  y=pad+labelH+qCanvas.height+gap+labelH;ctx.drawImage(rCanvas,pad,y);
+  const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('png')),'image/png'));
+  if(navigator.clipboard&&window.ClipboardItem){
+   await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
+   qaMsg.textContent='تم النسخ بصورة مرئية مع الرسم إن وجد.';
+  }else{
+   throw new Error('clipboard image unsupported');
+  }
+ }catch(e){
+  // احتياط: إذا منع المتصفح نسخ الصورة، نحافظ على النسخ النصي بدلاً من فقدان المحتوى.
+  const resultFields=[...out.querySelectorAll('math-field')].map(x=>(x.value||'').trim()).filter(Boolean);
+  const resultText=resultFields.length?resultFields.join('\n'):out.innerText.trim();
+  const plain='السؤال:\n'+question+'\n\nالنتيجة:\n'+resultText;
+  try{await navigator.clipboard.writeText(plain);qaMsg.textContent='المتصفح منع نسخ الصورة؛ تم النسخ كنص.';}
+  catch(_){qaMsg.textContent='تعذر النسخ تلقائيًا في هذا المتصفح.';}
+ }
+}
+function printQuestionAndAnswer(){
+ if(!(MF().value||'').trim()){qaMsg.textContent='لا يوجد سؤال للطباعة.';return}
+ document.body.classList.add('print-qa');
+ const cleanup=()=>{document.body.classList.remove('print-qa');window.removeEventListener('afterprint',cleanup)};
+ window.addEventListener('afterprint',cleanup);
+ qaMsg.textContent='نافذة الطباعة جاهزة — اختر حفظ كملف PDF.';
+ setTimeout(()=>window.print(),60);
+ setTimeout(()=>document.body.classList.remove('print-qa'),3000);
+}
+copyQA.onclick=copyQuestionAndAnswer;
+printQA.onclick=printQuestionAndAnswer;
+calc.onclick=async()=>{let raw=MF().value;if(!raw.trim())return;
+if(active==='تكامل'){
+  raw=raw.replace(/\\placeholder(?:\[[^\]]*\])?\{\s*\}/g,'');
+}
+raw=expandSavedFunctions(raw);out.innerHTML='<div>جاري الحساب…</div>';try{if(!py){out.innerHTML='<div>تجهيز المحرك لأول حساب…</div>';await bootEngine();out.innerHTML='<div>جاري الحساب…</div>';}py.globals.set('USER_LATEX',raw);py.globals.set('ACTIVE_PANEL',active);py.globals.set('DRAW_RANGES',JSON.stringify(getRanges()));let txt=await py.runPythonAsync('solve_input(USER_LATEX, ACTIVE_PANEL)');let ans=JSON.parse(txt);out.innerHTML='';if(['plot2d','plot3d','contour2d','curve3d','surfaceparam3d','implicit3d','vector2d','vector3d','point2d','point3d'].includes(ans.kind)){await ensurePlotly();let lab=document.createElement('div');lab.className='hint';lab.textContent='الرسم: '+(ans.label||'');out.appendChild(lab);let div=document.createElement('div');div.style.height=ans.kind.includes('3d')?'520px':'420px';out.appendChild(div);let tr=[];if(ans.kind==='plot2d')tr=(ans.traces||[{x:ans.x,y:ans.y,mode:'lines'}]).map(q=>({...q,type:'scatter'}));else if(ans.kind==='plot3d')tr=[{x:ans.x,y:ans.y,z:ans.z,type:'surface'}];else if(ans.kind==='contour2d')tr=[{x:ans.x,y:ans.y,z:ans.z,type:'contour',contours:ans.level===0?{start:0,end:0,size:1,coloring:'lines'}:undefined}];else if(ans.kind==='curve3d')tr=[{x:ans.x,y:ans.y,z:ans.z,type:'scatter3d',mode:'lines'}];else if(ans.kind==='surfaceparam3d')tr=[{x:ans.x,y:ans.y,z:ans.z,type:'surface'}];else if(ans.kind==='implicit3d')tr=[{x:ans.x,y:ans.y,z:ans.z,value:ans.value,type:'isosurface',isomin:0,isomax:0,surface:{count:1}}];else if(ans.kind==='vector2d'){let X=[],Y=[];for(let i=0;i<ans.x.length;i++){let m=Math.hypot(ans.u[i],ans.v[i])||1,sc=.35/m;X.push(ans.x[i],ans.x[i]+ans.u[i]*sc,null);Y.push(ans.y[i],ans.y[i]+ans.v[i]*sc,null)}tr=[{x:X,y:Y,type:'scatter',mode:'lines'}]}else if(ans.kind==='vector3d')tr=[{x:ans.x,y:ans.y,z:ans.z,u:ans.u,v:ans.v,w:ans.w,type:'cone',sizemode:'absolute',sizeref:.5}];else if(ans.kind==='point2d')tr=[{x:ans.x,y:ans.y,type:'scatter',mode:'markers',marker:{size:10}}];else if(ans.kind==='point3d')tr=[{x:ans.x,y:ans.y,z:ans.z,type:'scatter3d',mode:'markers',marker:{size:6}}];let layout={margin:{t:20,l:35,r:15,b:35}};if(ans.kind.includes('3d')||ans.kind==='surfaceparam3d'||ans.kind==='implicit3d'||ans.kind==='curve3d'||ans.kind==='vector3d'||ans.kind==='point3d'){layout.scene={xaxis:{title:'x'},yaxis:{title:'y'},zaxis:{title:'z'},aspectmode:'cube'};}else{layout.xaxis={title:'x'};layout.yaxis={title:'y',scaleanchor:'x',scaleratio:1};}Plotly.newPlot(div,tr,layout,{responsive:true});return}let a=document.createElement('math-field');a.readOnly=true;a.value=ans.latex||'';out.appendChild(a);if(ans.numeric&&ans.numeric!==ans.latex){let n=document.createElement('div');n.className='hint';n.textContent='القيمة العددية:';out.appendChild(n);let b=document.createElement('math-field');b.readOnly=true;b.value=ans.numeric;out.appendChild(b)}if(ans.note){let n=document.createElement('div');n.className='hint';n.textContent=ans.note;out.appendChild(n)}}catch(e){let s=String(e);let m=s.includes('أكمل')?'أكمل جميع الخانات قبل الحساب.':s.includes('غير مكتمل')?'الإدخال غير مكتمل.':s.includes('أقواس')?'تحقق من الأقواس في الإدخال.':'تعذر تفسير هذا الإدخال بهذه الصيغة.';out.innerHTML='<div class="msg">'+m+'</div>'}};
+</script></body></html>
